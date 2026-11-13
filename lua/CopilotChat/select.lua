@@ -68,11 +68,27 @@ function M.highlight(bufnr, clear)
     return
   end
 
-  vim.api.nvim_buf_set_extmark(selection.bufnr, selection_ns, selection.start_line - 1, 0, {
+  local count = vim.api.nvim_buf_line_count(selection.bufnr)
+  local start_row = selection.start_line - 1
+  if start_row < 0 or start_row >= count then
+    return
+  end
+
+  local opts = {
     hl_group = 'CopilotChatSelection',
-    end_row = selection.end_line,
     strict = false,
-  })
+  }
+  if selection.end_line < count then
+    -- Highlight whole lines up to the start of the line after the selection
+    opts.end_row = selection.end_line
+  else
+    -- Selection reaches the last line, end at the end of that line
+    local last_line = vim.api.nvim_buf_get_lines(selection.bufnr, count - 1, count, false)[1] or ''
+    opts.end_row = count - 1
+    opts.end_col = #last_line
+  end
+
+  pcall(vim.api.nvim_buf_set_extmark, selection.bufnr, selection_ns, start_row, 0, opts)
 end
 
 --- Get the selection from the target buffer
@@ -92,6 +108,13 @@ function M.get(bufnr)
   if start_line > finish_line then
     start_line, finish_line = finish_line, start_line
   end
+
+  -- Marks can point past the end of the buffer after it shrinks
+  local count = vim.api.nvim_buf_line_count(bufnr)
+  if start_line > count then
+    return nil
+  end
+  finish_line = math.min(finish_line, count)
 
   local ok, lines = pcall(vim.api.nvim_buf_get_lines, bufnr, start_line - 1, finish_line, false)
   if not ok then
@@ -131,12 +154,18 @@ function M.set(bufnr, winnr, start_line, end_line)
     return
   end
 
+  -- Keep the range inside the buffer
+  local count = vim.api.nvim_buf_line_count(bufnr)
+  start_line = math.min(math.max(start_line, 1), count)
+  end_line = math.min(math.max(end_line, start_line), count)
+
   pcall(vim.api.nvim_buf_set_mark, bufnr, marks[1], start_line, 0, {})
   pcall(vim.api.nvim_buf_set_mark, bufnr, marks[2], end_line, 0, {})
 
-  if winnr and vim.api.nvim_win_is_valid(winnr) then
+  if winnr and vim.api.nvim_win_is_valid(winnr) and vim.api.nvim_win_get_buf(winnr) == bufnr then
     pcall(vim.api.nvim_win_set_cursor, winnr, { start_line, 0 })
   end
 end
 
 return M
+

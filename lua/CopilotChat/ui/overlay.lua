@@ -123,7 +123,14 @@ function Overlay:restore(winnr, bufnr)
   vim.api.nvim_win_set_buf(winnr, bufnr)
 
   if self.cursor then
-    vim.api.nvim_win_set_cursor(winnr, self.cursor)
+    -- The restored buffer may have shrunk since the cursor was saved
+    local target = vim.api.nvim_win_get_buf(winnr)
+    local count = vim.api.nvim_buf_line_count(target)
+    local row = math.min(math.max(self.cursor[1], 1), count)
+    local line = vim.api.nvim_buf_get_lines(target, row - 1, row, false)[1] or ''
+    local col = math.min(self.cursor[2], #line)
+    pcall(vim.api.nvim_win_set_cursor, winnr, { row, col })
+    self.cursor = nil
   end
 
   -- Manually trigger BufEnter event as nvim_win_set_buf does not trigger it
@@ -140,16 +147,24 @@ end
 ---@protected
 function Overlay:show_help(msg, pos)
   if not msg or msg == '' then
-    vim.api.nvim_buf_del_extmark(self.bufnr, self.help_ns, 1)
+    if self.bufnr and vim.api.nvim_buf_is_valid(self.bufnr) then
+      pcall(vim.api.nvim_buf_del_extmark, self.bufnr, self.help_ns, 1)
+    end
     return
   end
 
   self:validate()
-  vim.api.nvim_buf_set_extmark(self.bufnr, self.help_ns, math.max(0, pos - 1), 0, {
+
+  -- Keep the extmark row inside the buffer
+  local count = vim.api.nvim_buf_line_count(self.bufnr)
+  pos = math.min(math.max(pos or count, 1), count)
+
+  pcall(vim.api.nvim_buf_set_extmark, self.bufnr, self.help_ns, pos - 1, 0, {
     id = 1,
     hl_mode = 'combine',
     priority = 100,
     virt_lines_above = true,
+    strict = false,
     virt_lines = vim.tbl_map(function(t)
       return { { t, 'CopilotChatHelp' } }
     end, vim.split(msg, '\n')),
@@ -157,3 +172,4 @@ function Overlay:show_help(msg, pos)
 end
 
 return Overlay
+
