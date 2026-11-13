@@ -48,7 +48,7 @@ Go to the copilot-chat.nvim in your GitHub account, select your branch, and clic
 
 ## Structure
 
-![structure.drawio](https://github.com/CopilotC-Nvim/CopilotChat.nvim/assets/5115805/e7517736-0152-47a3-8cb9-36a5dffcb6cc)
+TODO: draw a diagram of the structure using [Mermaid](https://mermaid.js.org/).
 
 ### Core
 
