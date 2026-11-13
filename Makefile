@@ -27,7 +27,10 @@ install-pre-commit:
 	pre-commit install
 
 test:
-	nvim --headless --clean -u ./scripts/test.lua
+	@config_dir=$$(mktemp -d) || exit 1; \
+	trap 'rm -rf "$$config_dir"' EXIT; \
+	XDG_CONFIG_HOME="$$config_dir" XDG_CONFIG_DIRS="$$config_dir" \
+		nvim --headless --clean -u ./scripts/test.lua
 
 all: luajit
 
@@ -52,3 +55,4 @@ $(BUILD_DIR):
 
 clean:
 	rm -rf $(BUILD_DIR)
+
