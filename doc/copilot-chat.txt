@@ -4,21 +4,22 @@
 ==============================================================================
 Table of Contents                             *copilot-chat-table-of-contents*
 
-1. Installation                                    |copilot-chat-installation|
+1. Acknowledgment                                |copilot-chat-acknowledgment|
+2. Installation                                    |copilot-chat-installation|
   - Requirements                                   |copilot-chat-requirements|
   - Optional Dependencies                 |copilot-chat-optional-dependencies|
   - Integration with pickers           |copilot-chat-integration-with-pickers|
   - lazy.nvim                                         |copilot-chat-lazy.nvim|
   - vim-plug                                           |copilot-chat-vim-plug|
-2. Core Concepts                                  |copilot-chat-core-concepts|
-3. Usage                                                  |copilot-chat-usage|
+3. Core Concepts                                  |copilot-chat-core-concepts|
+4. Usage                                                  |copilot-chat-usage|
   - Commands                                           |copilot-chat-commands|
   - Chat Key Mappings                         |copilot-chat-chat-key-mappings|
   - Predefined Functions                   |copilot-chat-predefined-functions|
   - Predefined Prompts                       |copilot-chat-predefined-prompts|
   - Resource Usage                               |copilot-chat-resource-usage|
   - Tool Usage                                       |copilot-chat-tool-usage|
-4. Configuration                                  |copilot-chat-configuration|
+5. Configuration                                  |copilot-chat-configuration|
   - Quick Setup                                     |copilot-chat-quick-setup|
   - Window & Appearance                     |copilot-chat-window-&-appearance|
   - Buffer Behavior                             |copilot-chat-buffer-behavior|
@@ -26,17 +27,36 @@ Table of Contents                             *copilot-chat-table-of-contents*
   - Prompts                                             |copilot-chat-prompts|
   - Functions                                         |copilot-chat-functions|
   - Providers                                         |copilot-chat-providers|
-5. API Reference                                  |copilot-chat-api-reference|
+6. API Reference                                  |copilot-chat-api-reference|
   - Core                                                   |copilot-chat-core|
   - Chat Window                                     |copilot-chat-chat-window|
   - Prompt parser                                 |copilot-chat-prompt-parser|
   - Example Usage                                 |copilot-chat-example-usage|
-6. Development                                      |copilot-chat-development|
+7. Development                                      |copilot-chat-development|
   - Setup                                                 |copilot-chat-setup|
   - Contributing                                   |copilot-chat-contributing|
-7. Contributors                                    |copilot-chat-contributors|
-8. Stargazers                                        |copilot-chat-stargazers|
-9. Links                                                  |copilot-chat-links|
+8. Contributors                                    |copilot-chat-contributors|
+9. Stargazers                                        |copilot-chat-stargazers|
+10. Links                                                 |copilot-chat-links|
+
+==============================================================================
+1. Acknowledgment                                *copilot-chat-acknowledgment*
+
+This repository is a fork of CopilotChat.nvim
+<https://github.com/CopilotC-Nvim/CopilotChat.nvim>, and I want to begin with a
+heartfelt thank-you to its author, Thomas Slusny
+<https://github.com/deathbeam>.
+
+Thomas, your work is the foundation that makes this fork possible. The time,
+care, and expertise you have shared through CopilotChat.nvim have given this
+project far more than a starting point: they have provided something valuable
+to learn from, build upon, and carry forward. Without your efforts, this fork
+would not exist.
+
+Thank you for creating CopilotChat.nvim and sharing it with the Neovim
+community. As this fork takes its own direction, I remain deeply grateful for
+your contributions and proud to acknowledge the work it builds on.
+
 
 copilot-chat.nvim brings GitHub Copilot Chat capabilities directly into Neovim
 with a focus on transparency and user control.
@@ -52,7 +72,7 @@ with a focus on transparency and user control.
 
 
 ==============================================================================
-1. Installation                                    *copilot-chat-installation*
+2. Installation                                    *copilot-chat-installation*
 
 
 REQUIREMENTS                                       *copilot-chat-requirements*
@@ -124,7 +144,7 @@ VIM-PLUG                                               *copilot-chat-vim-plug*
 
 
 ==============================================================================
-2. Core Concepts                                  *copilot-chat-core-concepts*
+3. Core Concepts                                  *copilot-chat-core-concepts*
 
 - **Resources** (`#<name>`) - Add specific content (files, git diffs, URLs) to your prompt
 - **Tools** (`@<name>`) - Give LLM access to functions it can call during the chat, with manual approval by default
@@ -137,7 +157,7 @@ VIM-PLUG                                               *copilot-chat-vim-plug*
   auto-complete. This is the easiest way to discover what’s available!
 
 ==============================================================================
-3. Usage                                                  *copilot-chat-usage*
+4. Usage                                                  *copilot-chat-usage*
 
 
 COMMANDS                                               *copilot-chat-commands*
@@ -324,7 +344,7 @@ automatically run specific tools (see |copilot-chat-functions|).
   without asking. Only use it if you fully trust the tool set and workspace.
 
 ==============================================================================
-4. Configuration                                  *copilot-chat-configuration*
+5. Configuration                                  *copilot-chat-configuration*
 
 For all available configuration options, see `lua/copilot-chat/config.lua`
 <lua/copilot-chat/config.lua>.
@@ -568,7 +588,7 @@ Add custom AI providers:
 
 
 ==============================================================================
-5. API Reference                                  *copilot-chat-api-reference*
+6. API Reference                                  *copilot-chat-api-reference*
 
 
 CORE                                                       *copilot-chat-core*
@@ -680,7 +700,7 @@ For more examples, see the examples wiki page
 
 
 ==============================================================================
-6. Development                                      *copilot-chat-development*
+7. Development                                      *copilot-chat-development*
 
 
 SETUP                                                     *copilot-chat-setup*
@@ -725,23 +745,23 @@ See CONTRIBUTING.md </CONTRIBUTING.md> for detailed guidelines.
 
 
 ==============================================================================
-7. Contributors                                    *copilot-chat-contributors*
+8. Contributors                                    *copilot-chat-contributors*
 
 Thanks goes to these wonderful people (emoji key
 <https://allcontributors.org/docs/en/emoji-key>):
 
-gptlang💻 📖Dung Duc Huynh (Kaka)💻 📖Ahmed Haracic💻Trí Thiện Nguyễn💻He Zhizhou💻Guruprakash Rajakkannu💻kristofka💻PostCyberPunk📖Katsuhiko Nishimra💻Erno Hopearuoho💻Shaun Garwood💻neutrinoA4💻 📖Jack Muratore💻Adriel Velazquez💻 📖Tomas Slusny💻 📖Nisal📖Tobias Gårdhus📖Petr Dlouhý📖Dylan Madisetti💻Aaron Weisberg💻 📖Jose Tlacuilo💻 📖Kevin Traver💻 📖dTry💻Arata Furukawa💻Ling💻Ivan Frolov💻Folke Lemaitre💻 📖GitMurf💻Dmitrii Lipin💻jinzhongjia📖guill💻Sjon-Paul Brown💻Renzo Mondragón💻 📖fjchen7💻Radosław Woźniak💻JakubPecenka💻thomastthai📖Tomáš Janoušek💻Toddneal Stallworth📖Sergey Alexandrov💻Léopold Mebazaa💻JunKi Jin💻abdennourzahaf📖Josiah💻Tony Fischer💻 📖Kohei Wada💻Sebastian Yaghoubi📖johncming💻Rokas Brazdžionis💻Sola📖 💻Mani Chandra💻Nischal Basuti📖Teo Ljungberg💻Joe Price💻Yufan You📖 💻Manish Kumar💻Anton Ždanov📖 💻Fredrik Averpil💻Aaron D Borden💻Md. Iftakhar Awal Chowdhury💻 📖Danilo Horta💻Mihamina Rakotomandimby📖 💻Ajmal S💻Samiul Islam💻Rui Costa💻CTCHEN💻Tobias Wölfel💻Alexander Garcia💻Max Kharandziuk💻Xinyu Xiang💻junqizhang💻Calum Lynch💻sirjls💻Vladimir Kolchurin💻RoseSecurity📖 💻Abhraneel Mukherjee💻This project follows the all-contributors
+gptlang💻 📖Dung Duc Huynh (Kaka)💻 📖Ahmed Haracic💻Trí Thiện Nguyễn💻He Zhizhou💻Guruprakash Rajakkannu💻kristofka💻PostCyberPunk📖Katsuhiko Nishimra💻Sjon-Paul Brown💻This project follows the all-contributors
 <https://github.com/all-contributors/all-contributors> specification.
 Contributions of any kind are welcome!
 
 
 ==============================================================================
-8. Stargazers                                        *copilot-chat-stargazers*
+9. Stargazers                                        *copilot-chat-stargazers*
 
 <https://starchart.cc/code-ai-nvim/copilot-chat.nvim>
 
 ==============================================================================
-9. Links                                                  *copilot-chat-links*
+10. Links                                                 *copilot-chat-links*
 
 1. *Stargazers over time*: https://starchart.cc/code-ai-nvim/copilot-chat.nvim.svg?variant=adaptive
 
