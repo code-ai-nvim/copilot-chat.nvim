@@ -64,6 +64,9 @@ function Spinner:start()
           hl_mode = 'combine',
           priority = 100,
           strict = false,
+          right_gravity = false,
+          invalidate = true,
+          undo_restore = false,
           virt_text = {
             { frame, 'CopilotChatStatus' },
           },
@@ -92,4 +95,3 @@ function Spinner:finish()
 end
 
 return Spinner
-

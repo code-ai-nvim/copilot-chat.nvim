@@ -154,8 +154,17 @@ function M.complete(without_input)
         end
 
         utils.schedule_main()
-        vim.api.nvim_buf_set_text(bufnr, row - 1, col, row - 1, col, { value })
-        vim.api.nvim_win_set_cursor(0, { row, col + #value })
+        if not vim.api.nvim_buf_is_valid(bufnr) then
+          return
+        end
+        local count = vim.api.nvim_buf_line_count(bufnr)
+        local target_row = math.min(math.max(row, 1), count)
+        local target_line = vim.api.nvim_buf_get_lines(bufnr, target_row - 1, target_row, false)[1] or ''
+        local target_col = math.min(math.max(col, 0), #target_line)
+        vim.api.nvim_buf_set_text(bufnr, target_row - 1, target_col, target_row - 1, target_col, { value })
+        if vim.api.nvim_win_is_valid(win) and vim.api.nvim_win_get_buf(win) == bufnr then
+          pcall(vim.api.nvim_win_set_cursor, win, { target_row, target_col + #value })
+        end
       end)
     end
 

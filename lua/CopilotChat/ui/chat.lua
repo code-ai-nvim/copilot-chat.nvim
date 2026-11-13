@@ -35,10 +35,22 @@ local function safe_extmark(bufnr, ns, row, col, opts)
 
   opts = opts or {}
   opts.strict = false
+  if opts.invalidate == nil then
+    opts.invalidate = true
+  end
+  if opts.undo_restore == nil then
+    opts.undo_restore = false
+  end
+  if opts.right_gravity == nil then
+    opts.right_gravity = false
+  end
 
   if opts.end_col then
     local line = vim.api.nvim_buf_get_lines(bufnr, row, row + 1, false)[1] or ''
     opts.end_col = math.min(opts.end_col, #line)
+    if opts.end_right_gravity == nil then
+      opts.end_right_gravity = false
+    end
   end
   if opts.end_row then
     opts.end_row = math.min(math.max(opts.end_row, row), count - 1)
@@ -147,6 +159,7 @@ end
 ---@field content string
 
 ---@class CopilotChat.ui.chat.Section
+---@field header_line integer?
 ---@field start_line integer
 ---@field end_line integer
 ---@field blocks CopilotChat.ui.chat.Block[]
@@ -448,6 +461,8 @@ function Chat:open(config)
     self.winnr = vim.api.nvim_get_current_win()
   end
 
+  vim.api.nvim_win_set_buf(self.winnr, self.bufnr)
+
   vim.wo[self.winnr].wrap = true
   vim.wo[self.winnr].linebreak = true
   vim.wo[self.winnr].cursorline = true
@@ -465,7 +480,6 @@ function Chat:open(config)
   vim.api.nvim_set_hl(ns, '@markup.quote.markdown', {}) -- disable quote block overriding chat keywords
   vim.api.nvim_set_hl(ns, '@markup.italic.markdown_inline', {}) -- disable italic messing up glob patterns
   vim.api.nvim_win_set_hl_ns(self.winnr, ns)
-  vim.api.nvim_win_set_buf(self.winnr, self.bufnr)
 end
 
 --- Close the chat window.
@@ -483,7 +497,7 @@ function Chat:close()
       self:restore(self.winnr, self.source.bufnr)
     end
   else
-    vim.api.nvim_win_close(self.winnr, true)
+    pcall(vim.api.nvim_win_close, self.winnr, true)
   end
 
   self.winnr = nil
@@ -508,7 +522,7 @@ function Chat:follow()
   end
 
   local last_line, last_column = last(self.bufnr)
-  vim.api.nvim_win_set_cursor(self.winnr, { last_line + 1, last_column })
+  pcall(vim.api.nvim_win_set_cursor, self.winnr, { last_line + 1, last_column })
 end
 
 --- Prepare the chat window for writing.
@@ -563,13 +577,8 @@ function Chat:add_message(message, replace)
     if section then
       local modifiable = vim.bo[self.bufnr].modifiable
       vim.bo[self.bufnr].modifiable = true
-      vim.api.nvim_buf_set_lines(
-        self.bufnr,
-        section.start_line - 1,
-        section.end_line,
-        false,
-        vim.split(message.content, '\n')
-      )
+      local start_row = section.header_line or (section.start_line - 1)
+      vim.api.nvim_buf_set_lines(self.bufnr, start_row, section.end_line, false, vim.split(message.content, '\n'))
       vim.bo[self.bufnr].modifiable = modifiable
       self:append('')
     end
@@ -597,7 +606,8 @@ function Chat:remove_message(role, cursor)
   -- Remove the section from the buffer
   local modifiable = vim.bo[self.bufnr].modifiable
   vim.bo[self.bufnr].modifiable = true
-  vim.api.nvim_buf_set_lines(self.bufnr, math.max(0, section.start_line - 2), section.end_line + 1, false, {})
+  local start_row = math.max(0, (section.header_line or (section.start_line - 1)) - 1)
+  vim.api.nvim_buf_set_lines(self.bufnr, start_row, section.end_line + 1, false, {})
   vim.bo[self.bufnr].modifiable = modifiable
 
   -- Remove the message from the messages list
@@ -636,6 +646,11 @@ function Chat:clear()
   self.token_count = nil
   self.token_max_count = nil
   self.messages = orderedmap()
+  self.last_changedtick = nil
+
+  local highlight_ns = vim.api.nvim_create_namespace('copilot-chat-headers')
+  vim.api.nvim_buf_clear_namespace(self.bufnr, highlight_ns, 0, -1)
+  self:show_help()
 
   local modifiable = vim.bo[self.bufnr].modifiable
   vim.bo[self.bufnr].modifiable = true
@@ -744,6 +759,7 @@ function Chat:parse()
           content = {},
           section = {
             blocks = {},
+            header_line = start_row - 1,
             start_line = start_row,
           },
         }
@@ -797,6 +813,9 @@ function Chat:parse()
       local section = message.section
 
       -- Keep every line number inside the buffer
+      if section.header_line then
+        section.header_line = math.min(math.max(section.header_line, 1), line_count)
+      end
       section.start_line = math.min(math.max(section.start_line or 1, 1), line_count)
       section.end_line = math.min(math.max(section.end_line or section.start_line, section.start_line - 1), line_count)
 
@@ -841,7 +860,7 @@ function Chat:render()
     if self.config.highlight_headers and section then
       -- Overlay section header with nice display
       local header_value = self.headers[message.role]
-      local header_line = section.start_line - 2
+      local header_line = (section.header_line or (section.start_line - 1)) - 1
       if message.model then
         header_value = header_value .. ' (' .. message.model .. ')'
       end
@@ -928,7 +947,7 @@ function Chat:render()
       local assistant_msg = self:get_message(constants.ROLE.ASSISTANT)
       if assistant_msg and assistant_msg.tool_calls and #assistant_msg.tool_calls > 0 then
         -- Use the real buffer lines (message.content is trimmed, so its indexes do not map to rows)
-        local first_row = section.start_line - 1
+        local first_row = section.header_line or (section.start_line - 1)
         local buf_lines = vim.api.nvim_buf_get_lines(self.bufnr, first_row, section.end_line, false)
         for idx, line in ipairs(buf_lines) do
           local row = first_row + idx - 1
@@ -1014,4 +1033,3 @@ function Chat:set_source(source_winnr)
 end
 
 return Chat
-

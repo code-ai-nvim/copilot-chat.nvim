@@ -77,6 +77,8 @@ function M.highlight(bufnr, clear)
   local opts = {
     hl_group = 'CopilotChatSelection',
     strict = false,
+    invalidate = true,
+    undo_restore = false,
   }
   if selection.end_line < count then
     -- Highlight whole lines up to the start of the line after the selection
@@ -168,4 +170,3 @@ function M.set(bufnr, winnr, start_line, end_line)
 end
 
 return M
-
