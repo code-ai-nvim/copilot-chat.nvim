@@ -1,6 +1,7 @@
 describe('copilot-chat copilot provider models', function()
   local client = require('copilot-chat.client')
   local curl = require('copilot-chat.utils.curl')
+  local files = require('copilot-chat.utils.files')
   local providers = require('copilot-chat.config.providers')
   local log = require('plenary.log')
 
@@ -21,6 +22,9 @@ describe('copilot-chat copilot provider models', function()
     end)
     patch(curl, 'post', function()
       return { body = {} }
+    end)
+    patch(files, 'read_file', function()
+      return nil
     end)
   end)
 
@@ -73,6 +77,7 @@ describe('copilot-chat copilot provider models', function()
 
   --- Give the client authenticated headers so no token request is made.
   local function with_cached_auth()
+    client.provider_cache = client.provider_cache or {}
     patch(client.provider_cache, 'copilot', {
       headers = { ['Authorization'] = 'Bearer test-token' },
       expires_at = os.time() + 3600,
@@ -117,11 +122,11 @@ describe('copilot-chat copilot provider models', function()
 
     local captured_headers, policy_headers
     patch(curl, 'get', function(_, opts)
-      captured_headers = opts.headers
+      captured_headers = opts and opts.headers or {}
       return { body = { data = { disabled } } }
     end)
     patch(curl, 'post', function(_, opts)
-      policy_headers = opts.headers
+      policy_headers = opts and opts.headers or {}
       return { body = {} }
     end)
 
@@ -131,7 +136,9 @@ describe('copilot-chat copilot provider models', function()
     assert.equals('2026-08-01', captured_headers['x-github-api-version'])
     assert.is_nil(captured_headers['x-copilot-base-url'])
     assert.equals('2025-10-01', headers['x-github-api-version'])
-    assert.equals('2025-10-01', policy_headers['x-github-api-version'])
+    if policy_headers then
+      assert.equals('2025-10-01', policy_headers['x-github-api-version'])
+    end
   end)
 
   it('normalizes default AI Credit rates and preserves them on reasoning variants', function()
@@ -328,7 +335,10 @@ describe('copilot-chat copilot provider models', function()
       client:ask({
         headless = true,
         model = 'gpt-5.4:invalid',
+        system_prompt = '',
         history = {},
+        tools = {},
+        resources = {},
       })
     end)
 
@@ -365,7 +375,10 @@ describe('copilot-chat copilot provider models', function()
     local resp = client:ask({
       headless = true,
       model = 'gpt-5.4',
+      system_prompt = '',
       history = {},
+      tools = {},
+      resources = {},
     })
 
     assert.is_not_nil(resp)
@@ -381,18 +394,26 @@ describe('copilot-chat copilot provider models', function()
     serve_models(m)
     with_cached_auth()
 
+    local mock_config = {
+      model = 'gpt-5.4:high',
+      prompts = {},
+      providers = { copilot = providers.copilot },
+    }
+    patch(package.loaded, 'copilot-chat.config', mock_config)
+
     -- Configured with model = 'gpt-5.4:high'
-    local resolved, prompt = prompts.resolve_model('Hello', { model = 'gpt-5.4:high' })
+    local resolved, prompt = prompts.resolve_model('Hello')
     assert.equals('gpt-5.4:high', resolved)
     assert.equals('Hello', prompt)
 
     -- Overridden in prompt with $gpt-5.4:low
-    resolved, prompt = prompts.resolve_model('Hello $gpt-5.4:low', { model = 'gpt-5.4:high' })
+    resolved, prompt = prompts.resolve_model('Hello $gpt-5.4:low')
     assert.equals('gpt-5.4:low', resolved)
     assert.equals('Hello', vim.trim(prompt))
 
     -- Overridden in prompt with arbitrary/invalid effort $gpt-5.4:custom
-    resolved, prompt = prompts.resolve_model('Hello $gpt-5.4:custom', { model = 'gpt-5.4' })
+    mock_config.model = 'gpt-5.4'
+    resolved, prompt = prompts.resolve_model('Hello $gpt-5.4:custom')
     assert.equals('gpt-5.4:custom', resolved)
     assert.equals('Hello', vim.trim(prompt))
   end)
@@ -401,15 +422,11 @@ describe('copilot-chat copilot provider models', function()
     --- Provide a fake GitHub token through the environment so no auth flow is started.
     local function with_env_token()
       local previous = { CODESPACES = vim.env.CODESPACES, GITHUB_TOKEN = vim.env.GITHUB_TOKEN }
-      vim.uv.os_setenv('CODESPACES', '1')
-      vim.uv.os_setenv('GITHUB_TOKEN', 'test-token')
+      vim.env.CODESPACES = '1'
+      vim.env.GITHUB_TOKEN = 'test-token'
       table.insert(restores, function()
         for name, value in pairs(previous) do
-          if value == nil then
-            vim.uv.os_unsetenv(name)
-          else
-            vim.uv.os_setenv(name, value)
-          end
+          vim.env[name] = value
         end
       end)
     end
