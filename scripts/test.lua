@@ -10,4 +10,9 @@ for name, url in pairs({
   vim.opt.runtimepath:append(install_path)
 end
 
-require('plenary.test_harness').test_directory('tests')
+-- Every spec file runs in its own nvim process: force it to use the minimal init
+-- instead of the user's personal config.
+require('plenary.test_harness').test_directory('tests', {
+  minimal_init = 'scripts/minimal.lua',
+})
+

@@ -1,58 +1,21 @@
-UNAME := $(shell uname)
-ARCH := $(patsubst aarch64,arm64,$(shell uname -m))
+NVIM ?= nvim
 
-ifeq ($(UNAME), Linux)
-    OS := linux
-    EXT := so
-else ifeq ($(UNAME), Darwin)
-    OS := macOS
-    EXT := dylib
-else ifeq ($(UNAME), Windows_NT)
-    OS := windows
-    EXT := dll
-else ifneq ($(findstring MSYS_NT,$(UNAME)),)
-    OS := windows
-    EXT := dll
-else
-    $(error Unsupported operating system: $(UNAME))
-endif
+# Sandbox so tests never touch the personal nvim config, data, state or cache
+TEST_HOME ?= $(CURDIR)/.tests
 
-LUA_VERSIONS := luajit lua51
-BUILD_DIR := build
+export XDG_CONFIG_HOME := $(TEST_HOME)/config
+export XDG_DATA_HOME := $(TEST_HOME)/data
+export XDG_STATE_HOME := $(TEST_HOME)/state
+export XDG_CACHE_HOME := $(TEST_HOME)/cache
+export NVIM_APPNAME := copilot-chat-tests
+export PLENARY_MINIMAL_INIT := scripts/minimal.lua
 
-.PHONY: help install-cli install-pre-commit install test tiktoken clean
-
-install-pre-commit:
-	pip install pre-commit
-	pre-commit install
+.PHONY: test clean-test
 
 test:
-	@config_dir=$$(mktemp -d) || exit 1; \
-	trap 'rm -rf "$$config_dir"' EXIT; \
-	XDG_CONFIG_HOME="$$config_dir" XDG_CONFIG_DIRS="$$config_dir" \
-		nvim --headless --clean -u ./scripts/test.lua
+	mkdir -p $(XDG_CONFIG_HOME) $(XDG_DATA_HOME) $(XDG_STATE_HOME) $(XDG_CACHE_HOME)
+	$(NVIM) --headless -i NONE -u scripts/minimal.lua -c "luafile scripts/test.lua"
 
-all: luajit
-
-luajit: $(BUILD_DIR)/tiktoken_core.$(EXT)
-lua51: $(BUILD_DIR)/tiktoken_core-lua51.$(EXT)
-
-
-define download_release
-	curl -LSsf https://github.com/gptlang/lua-tiktoken/releases/latest/download/tiktoken_core-$(1)-$(2)-$(3).$(EXT) -o $(4)
-endef
-
-$(BUILD_DIR)/tiktoken_core.$(EXT): | $(BUILD_DIR)
-	$(call download_release,$(OS),$(ARCH),luajit,$@)
-
-$(BUILD_DIR)/tiktoken_core-lua51.$(EXT): | $(BUILD_DIR)
-	$(call download_release,$(OS),$(ARCH),lua51,$@)
-
-tiktoken: $(BUILD_DIR)/tiktoken_core.$(EXT) $(BUILD_DIR)/tiktoken_core-lua51.$(EXT)
-
-$(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
-
-clean:
-	rm -rf $(BUILD_DIR)
+clean-test:
+	rm -rf $(TEST_HOME)
 
