@@ -1,7 +1,7 @@
-local utils = require('CopilotChat.utils')
-local class = require('CopilotChat.utils.class')
+local utils = require('copilot-chat.utils')
+local class = require('copilot-chat.utils.class')
 
----@class CopilotChat.ui.overlay.Overlay : Class
+---@class copilot_chat.ui.overlay.Overlay : Class
 ---@field bufnr integer?
 ---@field protected name string
 ---@field protected help string

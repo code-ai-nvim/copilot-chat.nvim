@@ -1,6 +1,6 @@
-local stringbuffer = require('CopilotChat.utils.stringbuffer')
+local stringbuffer = require('copilot-chat.utils.stringbuffer')
 
-describe('CopilotChat.utils.stringbuffer', function()
+describe('copilot-chat.utils.stringbuffer', function()
   it('concatenates strings with put', function()
     local buf = stringbuffer()
     buf:put('hello')

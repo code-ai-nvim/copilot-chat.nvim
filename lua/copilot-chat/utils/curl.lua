@@ -1,7 +1,7 @@
 local async = require('plenary.async')
 local curl = require('plenary.curl')
 local log = require('plenary.log')
-local utils = require('CopilotChat.utils')
+local utils = require('copilot-chat.utils')
 
 local M = {}
 

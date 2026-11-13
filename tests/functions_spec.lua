@@ -1,6 +1,6 @@
-local functions = require('CopilotChat.functions')
+local functions = require('copilot-chat.functions')
 
-describe('CopilotChat.functions', function()
+describe('copilot-chat.functions', function()
   describe('uri_to_url', function()
     it('replaces parameters in uri template', function()
       local uri = 'file://{path}'

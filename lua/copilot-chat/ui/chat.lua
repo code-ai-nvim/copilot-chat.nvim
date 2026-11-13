@@ -1,12 +1,12 @@
-local Overlay = require('CopilotChat.ui.overlay')
-local Spinner = require('CopilotChat.ui.spinner')
-local constants = require('CopilotChat.constants')
-local notify = require('CopilotChat.utils.notify')
-local utils = require('CopilotChat.utils')
-local class = require('CopilotChat.utils.class')
-local orderedmap = require('CopilotChat.utils.orderedmap')
+local Overlay = require('copilot-chat.ui.overlay')
+local Spinner = require('copilot-chat.ui.spinner')
+local constants = require('copilot-chat.constants')
+local notify = require('copilot-chat.utils.notify')
+local utils = require('copilot-chat.utils')
+local class = require('copilot-chat.utils.class')
+local orderedmap = require('copilot-chat.utils.orderedmap')
 
-function CopilotChatFoldExpr(lnum, separator)
+function copilot_chat_fold_expr(lnum, separator)
   local to_match = separator .. '$'
   if string.match(vim.fn.getline(lnum), to_match) then
     return '1'
@@ -101,7 +101,7 @@ local function match_block_header(header)
   end
 end
 
----@param header? CopilotChat.ui.chat.Header
+---@param header? copilot_chat.ui.chat.Header
 ---@param content? string
 ---@return string?
 local function match_block_content(header, content)
@@ -146,46 +146,46 @@ local function last(bufnr)
   return last_line, last_column
 end
 
----@class CopilotChat.ui.chat.Header
+---@class copilot_chat.ui.chat.Header
 ---@field filetype string
 ---@field filename string
 ---@field start_line number?
 ---@field end_line number?
 
----@class CopilotChat.ui.chat.Block
----@field header CopilotChat.ui.chat.Header
+---@class copilot_chat.ui.chat.Block
+---@field header copilot_chat.ui.chat.Header
 ---@field start_line number
 ---@field end_line number
 ---@field content string
 
----@class CopilotChat.ui.chat.Section
+---@class copilot_chat.ui.chat.Section
 ---@field header_line integer?
 ---@field start_line integer
 ---@field end_line integer
----@field blocks CopilotChat.ui.chat.Block[]
+---@field blocks copilot_chat.ui.chat.Block[]
 
----@class CopilotChat.ui.chat.Message : CopilotChat.client.Message
+---@class copilot_chat.ui.chat.Message : copilot_chat.client.Message
 ---@field id string?
----@field section CopilotChat.ui.chat.Section?
+---@field section copilot_chat.ui.chat.Section?
 
---- @class CopilotChat.ui.chat.Source
+--- @class copilot_chat.ui.chat.Source
 --- @field bufnr integer?
 --- @field winnr integer?
 --- @field cwd fun():string
 
----@class CopilotChat.ui.chat.Chat : CopilotChat.ui.overlay.Overlay
+---@class copilot_chat.ui.chat.Chat : copilot_chat.ui.overlay.Overlay
 ---@field winnr integer?
----@field config CopilotChat.config.Shared
+---@field config copilot_chat.config.Shared
 ---@field token_count number?
 ---@field token_max_count number?
----@field private messages OrderedMap<string, CopilotChat.client.Message>
----@field private layout CopilotChat.config.Layout?
+---@field private messages OrderedMap<string, copilot_chat.client.Message>
+---@field private layout copilot_chat.config.Layout?
 ---@field private headers table<string, string>
 ---@field private separator string
----@field private spinner CopilotChat.ui.spinner.Spinner
----@field private chat_overlay CopilotChat.ui.overlay.Overlay
+---@field private spinner copilot_chat.ui.spinner.Spinner
+---@field private chat_overlay copilot_chat.ui.overlay.Overlay
 ---@field private last_changedtick number?
----@field private source CopilotChat.ui.chat.Source
+---@field private source copilot_chat.ui.chat.Source
 ---@field private sticky string[]
 local Chat = class(function(self, config, on_buf_create)
   Overlay.init(self, 'copilot-chat', utils.key_to_info('show_help', config.mappings.show_help), on_buf_create)
@@ -264,7 +264,7 @@ end
 --- Get the closest code block to the cursor.
 ---@param role string? If specified, only considers sections of the given role
 ---@param cursor boolean? If true, returns the block closest to the cursor position
----@return CopilotChat.ui.chat.Block?
+---@return copilot_chat.ui.chat.Block?
 function Chat:get_block(role, cursor)
   local messages = self:get_messages()
 
@@ -304,7 +304,7 @@ function Chat:get_block(role, cursor)
 end
 
 --- Get list of all chat messages
----@return CopilotChat.ui.chat.Message[]
+---@return copilot_chat.ui.chat.Message[]
 function Chat:get_messages()
   self:parse()
   return self.messages:values()
@@ -313,7 +313,7 @@ end
 --- Get last message by role in the chat window.
 ---@param role string? If specified, only considers sections of the given role
 ---@param cursor boolean? If true, returns the message closest to the cursor position
----@return CopilotChat.ui.chat.Message?
+---@return copilot_chat.ui.chat.Message?
 function Chat:get_message(role, cursor)
   local messages = self:get_messages()
 
@@ -370,7 +370,7 @@ function Chat:clear_sticky()
   self.sticky = {}
 end
 
----@class CopilotChat.ui.Chat.show_overlay
+---@class copilot_chat.ui.Chat.show_overlay
 ---@field text string
 ---@field filetype string?
 ---@field syntax string?
@@ -378,7 +378,7 @@ end
 ---@field on_hide? fun(bufnr: number)
 
 --- Show the overlay buffer.
----@param opts CopilotChat.ui.Chat.show_overlay
+---@param opts copilot_chat.ui.Chat.show_overlay
 function Chat:overlay(opts)
   if not self:visible() then
     return
@@ -388,7 +388,7 @@ function Chat:overlay(opts)
 end
 
 --- Open the chat window.
----@param config CopilotChat.config.Shared
+---@param config copilot_chat.config.Shared
 function Chat:open(config)
   self:validate()
 
@@ -471,7 +471,7 @@ function Chat:open(config)
   if config.show_folds then
     vim.wo[self.winnr].foldcolumn = '1'
     vim.wo[self.winnr].foldmethod = 'expr'
-    vim.wo[self.winnr].foldexpr = "v:lua.CopilotChatFoldExpr(v:lnum, '" .. self.separator .. "')"
+    vim.wo[self.winnr].foldexpr = "v:lua.copilot_chat_fold_expr(v:lnum, '" .. self.separator .. "')"
   else
     vim.wo[self.winnr].foldcolumn = '0'
   end
@@ -547,7 +547,7 @@ function Chat:finish()
 end
 
 --- Add a message to the chat window.
----@param message CopilotChat.ui.chat.Message
+---@param message copilot_chat.ui.chat.Message
 ---@param replace boolean? If true, replaces the last message if it has same role
 function Chat:add_message(message, replace)
   local current_message = self:get_message()

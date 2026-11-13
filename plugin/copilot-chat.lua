@@ -4,11 +4,11 @@ end
 
 local min_version = '0.10.0'
 if vim.fn.has('nvim-' .. min_version) ~= 1 then
-  vim.notify_once(('CopilotChat.nvim requires Neovim >= %s'):format(min_version), vim.log.levels.ERROR)
+  vim.notify_once(('copilot-chat.nvim requires Neovim >= %s'):format(min_version), vim.log.levels.ERROR)
   return
 end
 
-local group = vim.api.nvim_create_augroup('CopilotChat', {})
+local group = vim.api.nvim_create_augroup('copilot-chat', {})
 
 -- Setup highlights
 local function setup_highlights()
@@ -58,7 +58,7 @@ vim.api.nvim_create_autocmd('FileType', {
 
 -- Setup commands
 vim.api.nvim_create_user_command('CopilotChat', function(args)
-  local chat = require('CopilotChat')
+  local chat = require('copilot-chat')
   local input = args.args
   if input and vim.trim(input) ~= '' then
     chat.ask(input)
@@ -71,36 +71,36 @@ end, {
   range = true,
 })
 vim.api.nvim_create_user_command('CopilotChatPrompts', function()
-  local chat = require('CopilotChat')
+  local chat = require('copilot-chat')
   chat.select_prompt()
 end, { force = true, range = true })
 vim.api.nvim_create_user_command('CopilotChatModels', function()
-  local chat = require('CopilotChat')
+  local chat = require('copilot-chat')
   chat.select_model()
 end, { force = true })
 vim.api.nvim_create_user_command('CopilotChatOpen', function()
-  local chat = require('CopilotChat')
+  local chat = require('copilot-chat')
   chat.open()
 end, { force = true })
 vim.api.nvim_create_user_command('CopilotChatClose', function()
-  local chat = require('CopilotChat')
+  local chat = require('copilot-chat')
   chat.close()
 end, { force = true })
 vim.api.nvim_create_user_command('CopilotChatToggle', function()
-  local chat = require('CopilotChat')
+  local chat = require('copilot-chat')
   chat.toggle()
 end, { force = true })
 vim.api.nvim_create_user_command('CopilotChatStop', function()
-  local chat = require('CopilotChat')
+  local chat = require('copilot-chat')
   chat.stop()
 end, { force = true })
 vim.api.nvim_create_user_command('CopilotChatReset', function()
-  local chat = require('CopilotChat')
+  local chat = require('copilot-chat')
   chat.reset()
 end, { force = true })
 
 local function complete_load()
-  local chat = require('CopilotChat')
+  local chat = require('copilot-chat')
   local options = vim.tbl_map(function(file)
     return vim.fn.fnamemodify(file, ':t:r')
   end, vim.fn.glob(chat.config.history_path .. '/*', true, true))
@@ -112,11 +112,11 @@ local function complete_load()
   return options
 end
 vim.api.nvim_create_user_command('CopilotChatSave', function(args)
-  local chat = require('CopilotChat')
+  local chat = require('copilot-chat')
   chat.save(args.args)
 end, { nargs = '*', force = true, complete = complete_load })
 vim.api.nvim_create_user_command('CopilotChatLoad', function(args)
-  local chat = require('CopilotChat')
+  local chat = require('copilot-chat')
   chat.load(args.args)
 end, { nargs = '*', force = true, complete = complete_load })
 

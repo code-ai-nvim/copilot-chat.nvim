@@ -29,19 +29,19 @@ Removed or changed params that you pass to `setup`:
 
 ## API changes
 
-- `CopilotChat.code_actions.show_help_actions` was reworked. Now you can use:
+- `copilot-chat.code_actions.show_help_actions` was reworked. Now you can use:
 
 ```lua
-local actions = require("CopilotChat.actions")
-require("CopilotChat.integrations.telescope").pick(actions.help_actions())
+local actions = require("copilot-chat.actions")
+require("copilot-chat.integrations.telescope").pick(actions.help_actions())
 ```
 
-- `CopilotChat.code_actions.show_prompt_actions` was reworked. Now you can use:
+- `copilot-chat.code_actions.show_prompt_actions` was reworked. Now you can use:
 
 ```lua
-local actions = require("CopilotChat.actions")
-local select = require("CopilotChat.select")
-require("CopilotChat.integrations.telescope").pick(actions.prompt_actions({
+local actions = require("copilot-chat.actions")
+local select = require("copilot-chat.select")
+require("copilot-chat.integrations.telescope").pick(actions.prompt_actions({
     selection = select.visual,
 }))
 ```
@@ -49,8 +49,8 @@ require("CopilotChat.integrations.telescope").pick(actions.prompt_actions({
 ## How to restore legacy behaviour
 
 ```lua
-local chat = require('CopilotChat')
-local select = require('CopilotChat.select')
+local chat = require('copilot-chat')
+local select = require('copilot-chat.select')
 
 chat.setup {
     -- Restore the behaviour for CopilotChat to use unnamed register by default

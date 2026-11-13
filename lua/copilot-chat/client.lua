@@ -1,48 +1,48 @@
----@class CopilotChat.client.AskOptions
+---@class copilot_chat.client.AskOptions
 ---@field headless boolean
----@field history table<CopilotChat.client.Message>
----@field tools table<CopilotChat.client.Tool>?
----@field resources table<CopilotChat.client.Resource>?
+---@field history table<copilot_chat.client.Message>
+---@field tools table<copilot_chat.client.Tool>?
+---@field resources table<copilot_chat.client.Resource>?
 ---@field system_prompt string
 ---@field model string
 ---@field temperature number
----@field on_progress fun(response: CopilotChat.client.Message)?
+---@field on_progress fun(response: copilot_chat.client.Message)?
 
----@class CopilotChat.client.Message
+---@class copilot_chat.client.Message
 ---@field role string
 ---@field content string
 ---@field reasoning string?
 ---@field tool_call_id string?
----@field tool_calls table<CopilotChat.client.ToolCall>?
+---@field tool_calls table<copilot_chat.client.ToolCall>?
 
----@class CopilotChat.client.AskResponse
----@field message CopilotChat.client.Message
+---@class copilot_chat.client.AskResponse
+---@field message copilot_chat.client.Message
 ---@field token_count number
 ---@field token_max_count number
 
----@class CopilotChat.client.ToolCall
+---@class copilot_chat.client.ToolCall
 ---@field id number
 ---@field index number
 ---@field name string
 ---@field arguments string
 
----@class CopilotChat.client.Tool
+---@class copilot_chat.client.Tool
 ---@field name string name of the tool
 ---@field description string description of the tool
 ---@field schema table? schema of the tool
 
----@class CopilotChat.client.ResourceAnnotations
+---@class copilot_chat.client.ResourceAnnotations
 ---@field start_line number?
 ---@field end_line number?
 
----@class CopilotChat.client.Resource
+---@class copilot_chat.client.Resource
 ---@field data string
 ---@field name string?
 ---@field mimetype string?
 ---@field uri string?
----@field annotations CopilotChat.client.ResourceAnnotations?
+---@field annotations copilot_chat.client.ResourceAnnotations?
 
----@class CopilotChat.client.Model
+---@class copilot_chat.client.Model
 --- identity
 ---@field provider string?
 ---@field id string
@@ -69,15 +69,15 @@
 ---@field base_url string? API base URL used to reach the model
 
 local log = require('plenary.log')
-local constants = require('CopilotChat.constants')
-local notify = require('CopilotChat.utils.notify')
-local tiktoken = require('CopilotChat.tiktoken')
-local utils = require('CopilotChat.utils')
-local curl = require('CopilotChat.utils.curl')
-local class = require('CopilotChat.utils.class')
-local files = require('CopilotChat.utils.files')
-local orderedmap = require('CopilotChat.utils.orderedmap')
-local stringbuffer = require('CopilotChat.utils.stringbuffer')
+local constants = require('copilot-chat.constants')
+local notify = require('copilot-chat.utils.notify')
+local tiktoken = require('copilot-chat.tiktoken')
+local utils = require('copilot-chat.utils')
+local curl = require('copilot-chat.utils.curl')
+local class = require('copilot-chat.utils.class')
+local files = require('copilot-chat.utils.files')
+local orderedmap = require('copilot-chat.utils.orderedmap')
+local stringbuffer = require('copilot-chat.utils.stringbuffer')
 
 --- Constants
 local RESOURCE_SHORT_FORMAT = '# %s\n```%s start_line=%s end_line=%s\n%s\n```'
@@ -130,8 +130,8 @@ local function generate_resource_block(content, mimetype, name, path, start_line
 end
 
 --- Generate messages for the given resources
---- @param resources CopilotChat.client.Resource[]
---- @return table<CopilotChat.client.Message>
+--- @param resources copilot_chat.client.Resource[]
+--- @return table<copilot_chat.client.Message>
 local function generate_resource_messages(resources)
   return vim
     .iter(resources or {})
@@ -158,8 +158,8 @@ end
 
 --- Generate ask request
 --- @param system_prompt string
---- @param history table<CopilotChat.client.Message>
---- @param generated_messages table<CopilotChat.client.Message>
+--- @param history table<copilot_chat.client.Message>
+--- @param generated_messages table<copilot_chat.client.Message>
 local function generate_ask_request(system_prompt, history, generated_messages)
   local messages = {}
 
@@ -181,9 +181,9 @@ end
 
 --- Resolve a `<model_id>:<effort>` identifier against the known models.
 --- The longest known base model id wins, so ids that contain colons keep working.
----@param models table<string, CopilotChat.client.Model>
+---@param models table<string, copilot_chat.client.Model>
 ---@param model_id string
----@return CopilotChat.client.Model? config Copy of the base model with the effort applied
+---@return copilot_chat.client.Model? config Copy of the base model with the effort applied
 local function resolve_effort_variant(models, model_id)
   local best, best_len, best_effort = nil, 0, nil
 
@@ -210,8 +210,8 @@ local function resolve_effort_variant(models, model_id)
   return config
 end
 
----@class CopilotChat.client.Client : Class
----@field private provider_resolver function():table<string, CopilotChat.config.providers.Provider>
+---@class copilot_chat.client.Client : Class
+---@field private provider_resolver function():table<string, copilot_chat.config.providers.Provider>
 ---@field private provider_cache table<string, table>
 ---@field private current_job string?
 local Client = class(function(self)
@@ -224,7 +224,7 @@ end)
 
 --- Get all providers from the client
 ---@param supported_method? string: The method to filter providers by (optional)
----@return OrderedMap<string, CopilotChat.config.providers.Provider>
+---@return OrderedMap<string, copilot_chat.config.providers.Provider>
 function Client:get_providers(supported_method)
   local out = orderedmap()
 
@@ -269,7 +269,7 @@ function Client:authenticate(provider_name)
 end
 
 --- Fetch models from the Copilot API
----@return table<string, CopilotChat.client.Model>
+---@return table<string, copilot_chat.client.Model>
 function Client:models()
   local out = {}
   local providers = self:get_providers('get_models')
@@ -339,8 +339,8 @@ function Client:info()
 end
 
 --- Ask a question to Copilot
----@param opts CopilotChat.client.AskOptions: Options for the request
----@return CopilotChat.client.AskResponse?
+---@param opts copilot_chat.client.AskOptions: Options for the request
+---@return copilot_chat.client.AskResponse?
 function Client:ask(opts)
   opts = opts or {}
   local job_id = utils.uuid()
@@ -743,5 +743,5 @@ function Client:running()
   return self.current_job ~= nil
 end
 
---- @type CopilotChat.client.Client
+--- @type copilot_chat.client.Client
 return Client()

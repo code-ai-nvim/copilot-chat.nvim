@@ -1,7 +1,7 @@
-local notify = require('CopilotChat.utils.notify')
-local utils = require('CopilotChat.utils')
-local curl = require('CopilotChat.utils.curl')
-local class = require('CopilotChat.utils.class')
+local notify = require('copilot-chat.utils.notify')
+local utils = require('copilot-chat.utils')
+local curl = require('copilot-chat.utils.curl')
+local class = require('copilot-chat.utils.class')
 
 --- Get the library extension based on the operating system
 --- @return string
@@ -39,7 +39,7 @@ local function load_tiktoken_data(tokenizer)
   return cache_path
 end
 
----@class CopilotChat.tiktoken.Tiktoken : Class
+---@class copilot_chat.tiktoken.Tiktoken : Class
 ---@field private tiktoken_core table?
 ---@field private tokenizer string?
 local Tiktoken = class(function(self)

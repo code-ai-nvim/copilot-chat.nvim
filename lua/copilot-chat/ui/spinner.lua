@@ -1,6 +1,6 @@
-local notify = require('CopilotChat.utils.notify')
-local utils = require('CopilotChat.utils')
-local class = require('CopilotChat.utils.class')
+local notify = require('copilot-chat.utils.notify')
+local utils = require('copilot-chat.utils')
+local class = require('copilot-chat.utils.class')
 
 local spinner_frames = {
   '⠋',
@@ -15,7 +15,7 @@ local spinner_frames = {
   '⠏',
 }
 
----@class CopilotChat.ui.spinner.Spinner : Class
+---@class copilot_chat.ui.spinner.Spinner : Class
 ---@field bufnr number
 ---@field status string?
 ---@field private index number

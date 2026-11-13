@@ -19,8 +19,8 @@ stylua --check .
 ## Project layout
 
 ```
-plugin/CopilotChat.lua    — Neovim plugin entry: commands, highlights, autocmds
-lua/CopilotChat/
+plugin/copilot-chat.lua   — Neovim plugin entry: commands, highlights, autocmds
+lua/copilot-chat/
   init.lua                — Main module: setup(), ask(), open/close/toggle, save/load
   client.lua              — Copilot API client (auth, streaming, tool calls)
   config.lua              — Default configuration schema
@@ -43,7 +43,7 @@ tests/                    — Plenary busted-style specs (*_spec.lua)
 scripts/
   test.lua                — Test runner bootstrap (sets up plenary)
   minimal.lua             — Minimal reproduction config
-doc/CopilotChat.txt       — Auto-generated vimdoc (do NOT edit; generated from README by panvimdoc in CI)
+doc/copilot-chat.txt      — Auto-generated vimdoc (do NOT edit; generated from README by panvimdoc in CI)
 ```
 
 ## Style and formatting
@@ -64,12 +64,12 @@ doc/CopilotChat.txt       — Auto-generated vimdoc (do NOT edit; generated from
 
 - CI (`ci.yml`): lint (StyLua) + test (plenary) on all PRs; vimdoc generation on main only.
 - Releases via release-please (`simple` type). Version tracked in `version.txt`.
-- `doc/CopilotChat.txt` is auto-committed by CI — do not edit manually.
+- `doc/copilot-chat.txt` is auto-committed by CI — do not edit manually.
 - `CHANGELOG.md` is managed by release-please — do not edit manually.
 
 ## Key gotchas
 
-- The module is loaded as `require('CopilotChat')` (capital C's) — this matches the `lua/CopilotChat/` directory name. Case matters.
+- The module is loaded as `require('copilot-chat')` — this matches the `lua/copilot-chat/` directory name. Case matters.
 - `init.lua` uses lazy self-initialization via `__index` metamethod — accessing any field triggers `setup()` if not already called.
 - `.dependencies/` is gitignored and auto-populated by the test runner (plenary clone).
 - `build/` is gitignored and holds downloaded tiktoken native libraries.

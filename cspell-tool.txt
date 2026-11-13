@@ -93,3 +93,4 @@ zindex
 noautocmd
 Starlark
 ABAP
+code-ai-nvim

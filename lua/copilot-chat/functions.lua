@@ -1,4 +1,4 @@
-local utils = require('CopilotChat.utils')
+local utils = require('copilot-chat.utils')
 
 local M = {}
 
@@ -122,7 +122,7 @@ function M.match_uri(uri, pattern)
 end
 
 --- Parse function schema and return a JSON schema object
----@param fn CopilotChat.config.functions.Function
+---@param fn copilot_chat.config.functions.Function
 function M.parse_schema(fn)
   local schema = fn.schema
 
@@ -150,8 +150,8 @@ function M.parse_schema(fn)
 end
 
 --- Prepare functions for tool use
----@param functions table<string, CopilotChat.config.functions.Function>
----@return table<CopilotChat.client.Tool>
+---@param functions table<string, copilot_chat.config.functions.Function>
+---@return table<copilot_chat.client.Tool>
 function M.parse_tools(functions)
   local tool_names = vim.tbl_keys(functions)
   table.sort(tool_names)
@@ -199,7 +199,7 @@ end
 
 --- Get input from the user based on the schema
 ---@param schema table?
----@param source CopilotChat.ui.chat.Source
+---@param source copilot_chat.ui.chat.Source
 ---@return string?
 function M.enter_input(schema, source)
   if not schema or not schema.properties then

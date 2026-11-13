@@ -1,9 +1,9 @@
----@class CopilotChat.config.prompts.Prompt : CopilotChat.config.Shared
+---@class copilot_chat.config.prompts.Prompt : copilot_chat.config.Shared
 ---@field prompt string?
 ---@field description string?
 ---@field mapping string?
 
----@type table<string, CopilotChat.config.prompts.Prompt>
+---@type table<string, copilot_chat.config.prompts.Prompt>
 return {
   COPILOT_BASE = {
     system_prompt = [[

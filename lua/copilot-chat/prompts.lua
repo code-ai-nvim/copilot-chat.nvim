@@ -1,10 +1,10 @@
-local client = require('CopilotChat.client')
-local constants = require('CopilotChat.constants')
-local functions = require('CopilotChat.functions')
-local notify = require('CopilotChat.utils.notify')
-local files = require('CopilotChat.utils.files')
-local orderedmap = require('CopilotChat.utils.orderedmap')
-local utils = require('CopilotChat.utils')
+local client = require('copilot-chat.client')
+local constants = require('copilot-chat.constants')
+local functions = require('copilot-chat.functions')
+local notify = require('copilot-chat.utils.notify')
+local files = require('copilot-chat.utils.files')
+local orderedmap = require('copilot-chat.utils.orderedmap')
+local utils = require('copilot-chat.utils')
 
 local WORD = '([^%s:]+)'
 local WORD_NO_INPUT = '([^%s]+)'
@@ -13,7 +13,7 @@ local WORD_WITH_INPUT_UNQUOTED = WORD .. ':?([^%s`]*)'
 
 --- Find custom instructions in the current working directory.
 ---@param cwd string
----@param config CopilotChat.config.Config
+---@param config copilot_chat.config.Config
 ---@return table
 local function find_custom_instructions(cwd, config)
   local out = {}
@@ -36,9 +36,9 @@ end
 local M = {}
 
 --- List available prompts.
----@return table<string, CopilotChat.config.prompts.Prompt>
+---@return table<string, copilot_chat.config.prompts.Prompt>
 function M.list_prompts()
-  local config = require('CopilotChat.config')
+  local config = require('copilot-chat.config')
   local prompts_to_use = {}
 
   for name, prompt in pairs(config.prompts) do
@@ -57,8 +57,8 @@ end
 
 --- Resolve enabled tools from the prompt.
 ---@param prompt string?
----@param config CopilotChat.config.Shared?
----@return table<CopilotChat.client.Tool>, string
+---@param config copilot_chat.config.Shared?
+---@return table<copilot_chat.client.Tool>, string
 function M.resolve_tools(prompt, config)
   config, prompt = M.resolve_prompt(prompt, config)
 
@@ -94,8 +94,8 @@ end
 --- Execute a tool call and return the raw output.
 ---@param name string Tool name
 ---@param input table|string Input arguments
----@param config CopilotChat.config.Shared
----@param source CopilotChat.client.Source
+---@param config copilot_chat.config.Shared
+---@param source copilot_chat.client.Source
 ---@return boolean ok
 ---@return any output
 ---@async
@@ -150,13 +150,13 @@ end
 
 --- Call and resolve function calls from the prompt.
 ---@param prompt string?
----@param config CopilotChat.config.Shared?
----@return table<CopilotChat.client.Resource>, table, string
+---@param config copilot_chat.config.Shared?
+---@return table<copilot_chat.client.Resource>, table, string
 ---@async
 function M.resolve_functions(prompt, config)
   config, prompt = M.resolve_prompt(prompt, config)
 
-  local chat = require('CopilotChat').chat
+  local chat = require('copilot-chat').chat
   local source = chat:get_source()
 
   if config.resources then
@@ -315,11 +315,11 @@ end
 
 --- Resolve the final prompt and config from prompt template.
 ---@param prompt string?
----@param config CopilotChat.config.Shared?
----@return CopilotChat.config.prompts.Prompt, string
+---@param config copilot_chat.config.Shared?
+---@return copilot_chat.config.prompts.Prompt, string
 ---@async
 function M.resolve_prompt(prompt, config)
-  local chat = require('CopilotChat').chat
+  local chat = require('copilot-chat').chat
   local source = chat:get_source()
 
   if prompt == nil then
@@ -355,7 +355,7 @@ function M.resolve_prompt(prompt, config)
     return inner_config, inner_prompt
   end
 
-  config = vim.tbl_deep_extend('force', require('CopilotChat.config'), config or {})
+  config = vim.tbl_deep_extend('force', require('copilot-chat.config'), config or {})
   config, prompt = resolve(config, prompt or '')
 
   if config.system_prompt then
@@ -364,7 +364,7 @@ function M.resolve_prompt(prompt, config)
       config.system_prompt = config.prompts[config.system_prompt].system_prompt
     end
 
-    local custom_instructions = vim.trim(require('CopilotChat.instructions.custom_instructions'))
+    local custom_instructions = vim.trim(require('copilot-chat.instructions.custom_instructions'))
     for _, instruction in ipairs(find_custom_instructions(source.cwd(), config)) do
       config.system_prompt = vim.trim(config.system_prompt)
         .. '\n'
@@ -374,16 +374,16 @@ function M.resolve_prompt(prompt, config)
     config.system_prompt = vim.trim(config.system_prompt) .. '\n' .. config.prompts.COPILOT_BASE.system_prompt
     config.system_prompt = vim.trim(config.system_prompt)
       .. '\n'
-      .. vim.trim(require('CopilotChat.instructions.tool_use'))
+      .. vim.trim(require('copilot-chat.instructions.tool_use'))
 
     if config.diff == 'unified' then
       config.system_prompt = vim.trim(config.system_prompt)
         .. '\n'
-        .. vim.trim(require('CopilotChat.instructions.edit_file_unified'))
+        .. vim.trim(require('copilot-chat.instructions.edit_file_unified'))
     else
       config.system_prompt = vim.trim(config.system_prompt)
         .. '\n'
-        .. vim.trim(require('CopilotChat.instructions.edit_file_block'))
+        .. vim.trim(require('copilot-chat.instructions.edit_file_block'))
     end
 
     config.system_prompt = config.system_prompt:gsub('{OS_NAME}', vim.uv.os_uname().sysname)
@@ -396,7 +396,7 @@ end
 
 --- Resolve the model from the prompt.
 ---@param prompt string?
----@param config CopilotChat.config.Shared?
+---@param config copilot_chat.config.Shared?
 ---@return string, string
 ---@async
 function M.resolve_model(prompt, config)

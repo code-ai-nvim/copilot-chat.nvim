@@ -1,9 +1,9 @@
 local async = require('plenary.async')
-local client = require('CopilotChat.client')
-local constants = require('CopilotChat.constants')
-local config = require('CopilotChat.config')
-local functions = require('CopilotChat.functions')
-local utils = require('CopilotChat.utils')
+local client = require('copilot-chat.client')
+local constants = require('copilot-chat.constants')
+local config = require('copilot-chat.config')
+local functions = require('copilot-chat.functions')
+local utils = require('copilot-chat.utils')
 
 local M = {}
 
@@ -131,7 +131,7 @@ end
 --- Trigger the completion for the chat window.
 ---@param without_input boolean?
 function M.complete(without_input)
-  local source = require('CopilotChat').chat:get_source()
+  local source = require('copilot-chat').chat:get_source()
   local info = M.info()
   local bufnr = vim.api.nvim_get_current_buf()
   local line = vim.api.nvim_get_current_line()
@@ -241,7 +241,7 @@ function M.enable(bufnr, autocomplete)
     end
   else
     -- Just set the omnifunc for the buffer
-    vim.bo[bufnr].omnifunc = [[v:lua.require'CopilotChat.completion'.omnifunc]]
+    vim.bo[bufnr].omnifunc = [[v:lua.require'copilot-chat.completion'.omnifunc]]
   end
 end
 

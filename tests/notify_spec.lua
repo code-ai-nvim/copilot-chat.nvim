@@ -1,6 +1,6 @@
-local notify = require('CopilotChat.utils.notify')
+local notify = require('copilot-chat.utils.notify')
 
-describe('CopilotChat.notify', function()
+describe('copilot-chat.notify', function()
   before_each(function()
     -- Clear all listeners before each test
     notify.clear()

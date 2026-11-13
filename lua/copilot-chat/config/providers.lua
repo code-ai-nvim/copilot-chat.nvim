@@ -1,10 +1,10 @@
 local log = require('plenary.log')
 local plenary_utils = require('plenary.async.util')
-local constants = require('CopilotChat.constants')
-local notify = require('CopilotChat.utils.notify')
-local utils = require('CopilotChat.utils')
-local curl = require('CopilotChat.utils.curl')
-local files = require('CopilotChat.utils.files')
+local constants = require('copilot-chat.constants')
+local notify = require('copilot-chat.utils.notify')
+local utils = require('copilot-chat.utils')
+local curl = require('copilot-chat.utils.curl')
+local files = require('copilot-chat.utils.files')
 
 local EDITOR_VERSION = 'Neovim/' .. vim.version().major .. '.' .. vim.version().minor .. '.' .. vim.version().patch
 local DEFAULT_COPILOT_BASE_URL = 'https://api.githubcopilot.com'
@@ -228,8 +228,8 @@ local function split_copilot_headers(headers)
 end
 
 --- Prepare input for Responses API
----@param inputs CopilotChat.client.Message[]
----@param opts CopilotChat.config.providers.Options
+---@param inputs copilot_chat.client.Message[]
+---@param opts copilot_chat.config.providers.Options
 ---@return table
 local function prepare_responses_input(inputs, opts)
   local instructions = nil
@@ -294,8 +294,8 @@ local function prepare_responses_input(inputs, opts)
 end
 
 --- Prepare input for Chat Completions API
----@param inputs CopilotChat.client.Message[]
----@param opts CopilotChat.config.providers.Options
+---@param inputs copilot_chat.client.Message[]
+---@param opts copilot_chat.config.providers.Options
 ---@return table
 local function prepare_chat_input(inputs, opts)
   local is_o1 = vim.startswith(opts.model.id, 'o1')
@@ -389,7 +389,7 @@ end
 
 --- Parse Responses API output (both streaming and non-streaming)
 ---@param output table Raw API response
----@return CopilotChat.config.providers.Output
+---@return copilot_chat.config.providers.Output
 local function prepare_responses_output(output)
   local content = ''
   local reasoning = ''
@@ -494,7 +494,7 @@ end
 
 --- Parse Chat Completions API output (both streaming and non-streaming)
 ---@param output table Raw API response
----@return CopilotChat.config.providers.Output
+---@return copilot_chat.config.providers.Output
 local function prepare_chat_output(output)
   local tool_calls = {}
 
@@ -538,28 +538,28 @@ local function prepare_chat_output(output)
   }
 end
 
----@class CopilotChat.config.providers.Options
----@field model CopilotChat.client.Model
+---@class copilot_chat.config.providers.Options
+---@field model copilot_chat.client.Model
 ---@field temperature number?
----@field tools table<CopilotChat.client.Tool>?
+---@field tools table<copilot_chat.client.Tool>?
 
----@class CopilotChat.config.providers.Output
+---@class copilot_chat.config.providers.Output
 ---@field content string
 ---@field reasoning string?
 ---@field finish_reason string?
 ---@field total_tokens number?
----@field tool_calls table<CopilotChat.client.ToolCall>
+---@field tool_calls table<copilot_chat.client.ToolCall>
 ---@field model string?
 
----@class CopilotChat.config.providers.Provider
+---@class copilot_chat.config.providers.Provider
 ---@field disabled nil|boolean
 ---@field get_headers nil|fun():table<string, string>,number?
 ---@field get_info nil|fun(headers:table):string[]
----@field get_models nil|fun(headers:table):table<CopilotChat.client.Model>
+---@field get_models nil|fun(headers:table):table<copilot_chat.client.Model>
 ---@field resolve_model nil|fun(headers:table, model: string):string,table?
----@field prepare_input nil|fun(inputs:CopilotChat.client.Message[], opts:CopilotChat.config.providers.Options):table,table?
----@field prepare_output nil|fun(output:table, opts:CopilotChat.config.providers.Options):CopilotChat.config.providers.Output
----@field get_url nil|fun(opts:CopilotChat.config.providers.Options):string
+---@field prepare_input nil|fun(inputs:copilot_chat.client.Message[], opts:copilot_chat.config.providers.Options):table,table?
+---@field prepare_output nil|fun(output:table, opts:copilot_chat.config.providers.Options):copilot_chat.config.providers.Output
+---@field get_url nil|fun(opts:copilot_chat.config.providers.Options):string
 
 --- Return a pricing sub-table, or nil when it is missing or malformed.
 --- Malformed (non-table) values are reported once.
@@ -646,7 +646,7 @@ local function format_amount(value)
   return text
 end
 
----@type table<string, CopilotChat.config.providers.Provider>
+---@type table<string, copilot_chat.config.providers.Provider>
 local M = {}
 
 M.copilot = {
@@ -669,7 +669,7 @@ M.copilot = {
     return {
       ['Authorization'] = 'Bearer ' .. response.body.token,
       ['Editor-Version'] = EDITOR_VERSION,
-      ['Editor-Plugin-Version'] = 'CopilotChat.nvim/*',
+      ['Editor-Plugin-Version'] = 'copilot-chat.nvim/*',
       ['Copilot-Integration-Id'] = 'vscode-chat',
       ['x-github-api-version'] = '2025-10-01',
       -- Store the resolved base URL in a custom header so that get_models,
@@ -962,4 +962,3 @@ M.github_models = {
 }
 
 return M
-

@@ -1,7 +1,7 @@
 local async = require('plenary.async')
-local utils = require('CopilotChat.utils')
-local curl = require('CopilotChat.utils.curl')
-local files = require('CopilotChat.utils.files')
+local utils = require('copilot-chat.utils')
+local curl = require('copilot-chat.utils.curl')
+local files = require('copilot-chat.utils.files')
 local file_cache = {}
 local url_cache = {}
 

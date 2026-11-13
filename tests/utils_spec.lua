@@ -1,6 +1,6 @@
-local utils = require('CopilotChat.utils')
+local utils = require('copilot-chat.utils')
 
-describe('CopilotChat.utils', function()
+describe('copilot-chat.utils', function()
   it('empty', function()
     assert.is_true(utils.empty(nil))
     assert.is_true(utils.empty(''))

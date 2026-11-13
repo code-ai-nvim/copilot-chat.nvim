@@ -1,8 +1,8 @@
-local Chat = require('CopilotChat.ui.chat')
-local config = require('CopilotChat.config')
-local constants = require('CopilotChat.constants')
+local Chat = require('copilot-chat.ui.chat')
+local config = require('copilot-chat.config')
+local constants = require('copilot-chat.constants')
 
-describe('CopilotChat.ui.chat bounds', function()
+describe('copilot-chat.ui.chat bounds', function()
   local chat
 
   local function parsing_available()
@@ -212,10 +212,10 @@ describe('CopilotChat.ui.chat bounds', function()
           for _, dep in ipairs(vim.fn.glob(cwd .. '/.dependencies/*', false, true)) do
             vim.opt.runtimepath:append(dep)
           end
-          vim.cmd('runtime plugin/CopilotChat.lua')
+          vim.cmd('runtime plugin/copilot-chat.lua')
 
-          local Chat = require('CopilotChat.ui.chat')
-          local cfg = require('CopilotChat.config')
+          local Chat = require('copilot-chat.ui.chat')
+          local cfg = require('copilot-chat.config')
           local c = Chat(vim.tbl_extend('force', cfg, {
             show_help = true,
             highlight_headers = true,

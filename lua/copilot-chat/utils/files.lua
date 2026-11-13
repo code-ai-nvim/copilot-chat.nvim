@@ -21,7 +21,7 @@ local function filter_files(files, max_count)
   return files
 end
 
----@class CopilotChat.utils.ScanOpts
+---@class copilot_chat.utils.ScanOpts
 ---@field max_count number? The maximum number of files to scan
 ---@field max_depth number? The maximum depth to scan
 ---@field pattern? string The glob pattern to match files
@@ -30,7 +30,7 @@ end
 
 --- Scan a directory
 ---@param path string
----@param opts CopilotChat.utils.ScanOpts?
+---@param opts copilot_chat.utils.ScanOpts?
 ---@async
 M.glob = async.wrap(function(path, opts, callback)
   opts = vim.tbl_deep_extend('force', M.scan_args, opts or {})
@@ -138,7 +138,7 @@ end, 3)
 
 --- Grep a directory
 ---@param path string The path to search
----@param opts CopilotChat.utils.ScanOpts?
+---@param opts copilot_chat.utils.ScanOpts?
 M.grep = async.wrap(function(path, opts, callback)
   opts = vim.tbl_deep_extend('force', M.scan_args, opts or {})
   local cmd = {}

@@ -1,7 +1,7 @@
----@alias CopilotChat.config.Layout 'vertical'|'horizontal'|'float'|'replace'
+---@alias copilot_chat.config.Layout 'vertical'|'horizontal'|'float'|'replace'
 
----@class CopilotChat.config.Window
----@field layout? CopilotChat.config.Layout|fun():CopilotChat.config.Layout
+---@class copilot_chat.config.Window
+---@field layout? copilot_chat.config.Layout|fun():copilot_chat.config.Layout
 ---@field relative 'editor'|'win'|'cursor'|'mouse'?
 ---@field border 'none'|'single'|'double'|'rounded'|'solid'|'shadow'?
 ---@field width number?
@@ -13,7 +13,7 @@
 ---@field zindex number?
 ---@field blend number?
 
----@class CopilotChat.config.Shared
+---@class copilot_chat.config.Shared
 ---@field system_prompt nil|string
 ---@field model string?
 ---@field tools string|table<string>|nil
@@ -24,9 +24,9 @@
 ---@field language string?
 ---@field temperature number?
 ---@field headless boolean?
----@field callback nil|fun(response: CopilotChat.client.Message, source: CopilotChat.ui.chat.Source)
+---@field callback nil|fun(response: copilot_chat.client.Message, source: copilot_chat.ui.chat.Source)
 ---@field remember_as_sticky boolean?
----@field window CopilotChat.config.Window?
+---@field window copilot_chat.config.Window?
 ---@field show_help boolean?
 ---@field show_folds boolean?
 ---@field highlight_selection boolean?
@@ -38,8 +38,8 @@
 ---@field clear_chat_on_new_prompt boolean?
 ---@field stop_on_function_failure boolean?
 
---- CopilotChat default configuration
----@class CopilotChat.config.Config : CopilotChat.config.Shared
+--- copilot-chat default configuration
+---@class copilot_chat.config.Config : copilot_chat.config.Shared
 ---@field debug boolean?
 ---@field log_level 'trace'|'debug'|'info'|'warn'|'error'|'fatal'?
 ---@field proxy string?
@@ -51,15 +51,15 @@
 ---@field history_path string?
 ---@field headers table<string, string>?
 ---@field separator string?
----@field providers table<string, CopilotChat.config.providers.Provider>?
----@field functions table<string, CopilotChat.config.functions.Function>?
----@field prompts table<string, CopilotChat.config.prompts.Prompt|string>?
----@field mappings CopilotChat.config.mappings?
+---@field providers table<string, copilot_chat.config.providers.Provider>?
+---@field functions table<string, copilot_chat.config.functions.Function>?
+---@field prompts table<string, copilot_chat.config.prompts.Prompt|string>?
+---@field mappings copilot_chat.config.mappings?
 return {
 
   -- Shared config starts here (can be passed to functions at runtime and configured via setup function)
 
-  system_prompt = require('CopilotChat.config.prompts').COPILOT_INSTRUCTIONS.system_prompt, -- System prompt to use (can be specified manually in prompt via /).
+  system_prompt = require('copilot-chat.config.prompts').COPILOT_INSTRUCTIONS.system_prompt, -- System prompt to use (can be specified manually in prompt via /).
 
   model = 'gpt-5-mini', -- Default model to use, see ':CopilotChatModels' for available models (can be specified manually in prompt via $). Reasoning effort can be specified with colon syntax (e.g. 'gpt-5.4:high').
   tools = nil, -- Default tool or array of tools (or groups) to share with LLM (can be specified manually in prompt via @).
@@ -117,7 +117,7 @@ return {
   selection = 'visual', -- Selection source
   chat_autocomplete = true, -- Enable chat autocompletion (when disabled, requires manual `mappings.complete` trigger)
 
-  log_path = vim.fn.stdpath('state') .. '/CopilotChat.log', -- Default path to log file
+  log_path = vim.fn.stdpath('state') .. '/copilot-chat.log', -- Default path to log file
   history_path = vim.fn.stdpath('data') .. '/copilotchat_history', -- Default path to stored history
 
   headers = {
@@ -129,14 +129,14 @@ return {
   separator = '───', -- Separator to use in chat
 
   -- default providers
-  providers = require('CopilotChat.config.providers'),
+  providers = require('copilot-chat.config.providers'),
 
   -- default functions
-  functions = require('CopilotChat.config.functions'),
+  functions = require('copilot-chat.config.functions'),
 
   -- default prompts
-  prompts = require('CopilotChat.config.prompts'),
+  prompts = require('copilot-chat.config.prompts'),
 
   -- default mappings
-  mappings = require('CopilotChat.config.mappings'),
+  mappings = require('copilot-chat.config.mappings'),
 }

@@ -1,4 +1,4 @@
----@class CopilotChat.select.Selection
+---@class copilot-chat.select.Selection
 ---@field content string
 ---@field start_line integer
 ---@field end_line integer
@@ -7,42 +7,42 @@
 ---@field bufnr integer
 
 local log = require('plenary.log')
-local utils = require('CopilotChat.utils')
+local utils = require('copilot-chat.utils')
 
 local M = {}
 
 --- Use #selection instead
 ---@deprecated
 function M.visual(_)
-  log.warn('CopilotChat.select.visual is deprecated, use #selection instead')
+  log.warn('copilot-chat.select.visual is deprecated, use #selection instead')
   return nil
 end
 
 --- Use #selection instead
 ---@deprecated use #selection instead
 function M.buffer(_)
-  log.warn('CopilotChat.select.buffer is deprecated, use #selection instead')
+  log.warn('copilot-chat.select.buffer is deprecated, use #selection instead')
   return nil
 end
 
 --- Use #selection instead
 ---@deprecated use #selection instead
 function M.line(_)
-  log.warn('CopilotChat.select.line is deprecated, use #selection instead')
+  log.warn('copilot-chat.select.line is deprecated, use #selection instead')
   return nil
 end
 
 --- Use #selection instead
 ---@deprecated use #selection instead
 function M.unnamed(_)
-  log.warn('CopilotChat.select.unnamed is deprecated, use #selection instead')
+  log.warn('copilot-chat.select.unnamed is deprecated, use #selection instead')
   return nil
 end
 
 --- Get the marks used for selection
 ---@return string[]
 function M.marks()
-  local config = require('CopilotChat.config')
+  local config = require('copilot-chat.config')
   local marks = { '<', '>' }
   if config.selection == 'unnamed' then
     marks = { '[', ']' }
@@ -95,7 +95,7 @@ end
 
 --- Get the selection from the target buffer
 ---@param bufnr integer
----@return CopilotChat.select.Selection?
+---@return copilot-chat.select.Selection?
 function M.get(bufnr)
   if not utils.buf_valid(bufnr) then
     return nil

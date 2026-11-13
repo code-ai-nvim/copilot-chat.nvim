@@ -12,7 +12,7 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="eOs-nvW8SsAfTkMGeZ8a-1" value="CopilotChat" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="eOs-nvW8SsAfTkMGeZ8a-1" value="copilot-chat" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="160" y="160" width="200" height="40" as="geometry" />
         </mxCell>
         <mxCell id="eOs-nvW8SsAfTkMGeZ8a-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;startArrow=classic;startFill=1;" edge="1" parent="1" source="eOs-nvW8SsAfTkMGeZ8a-2" target="eOs-nvW8SsAfTkMGeZ8a-3">

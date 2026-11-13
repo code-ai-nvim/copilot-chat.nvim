@@ -1,4 +1,4 @@
-local utils = require('CopilotChat.utils')
+local utils = require('copilot-chat.utils')
 
 local M = {}
 
@@ -50,7 +50,7 @@ local function treesitter_query_available(ft, query_name)
 end
 
 function M.check()
-  start('CopilotChat.nvim [core]')
+  start('copilot-chat.nvim [core]')
 
   local vim_version = vim.trim(vim.api.nvim_exec2('version', { output = true }).output)
   if vim.fn.has('nvim-0.10.0') == 1 then
@@ -59,11 +59,11 @@ function M.check()
     error('nvim: unsupported, please upgrade to 0.10.0 or later. See "https://neovim.io/".')
   end
 
-  local initialized = require('CopilotChat').initialized
+  local initialized = require('copilot-chat').initialized
   if initialized then
     ok('initialized: true')
   else
-    error('initialized: false, something went wrong. See `:h CopilotChat-installation`.')
+    error('initialized: false, something went wrong. See `:h copilot-chat-installation`.')
   end
 
   local testfile = os.tmpname()
@@ -83,7 +83,7 @@ function M.check()
     error('temp dir: not writable. Permissions: ' .. perms .. ' (dir: ' .. vim.fn.fnamemodify(testfile, ':h') .. ')')
   end
 
-  start('CopilotChat.nvim [commands]')
+  start('copilot-chat.nvim [commands]')
 
   local curl_version = run_command('curl', '--version')
   if curl_version == false then
@@ -120,7 +120,7 @@ function M.check()
     ok('gh: ' .. gh_version)
   end
 
-  start('CopilotChat.nvim [dependencies]')
+  start('copilot-chat.nvim [dependencies]')
 
   if lualib_installed('plenary') then
     ok('plenary: installed')
@@ -140,7 +140,7 @@ function M.check()
 
   if utils.is_default_select() then
     warn(
-      'vim.ui.select: using default implementation, which may not provide the best user experience. See `:h CopilotChat-integration-with-pickers`.'
+      'vim.ui.select: using default implementation, which may not provide the best user experience. See `:h copilot-chat-integration-with-pickers`.'
     )
   else
     ok('vim.ui.select: overridden by `' .. debug.getinfo(vim.ui.select, 'S').source .. '`')
@@ -164,7 +164,7 @@ function M.check()
     ok('treesitter[markdown/copilotchat]: found')
   else
     error(
-      'treesitter[markdown/copilotchat]: missing, required for chat parsing. See `:h CopilotChat-installation` for instructions.'
+      'treesitter[markdown/copilotchat]: missing, required for chat parsing. See `:h copilot-chat-installation` for instructions.'
     )
   end
 

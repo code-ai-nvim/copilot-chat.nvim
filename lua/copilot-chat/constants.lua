@@ -1,5 +1,5 @@
 return {
-  PLUGIN_NAME = 'CopilotChat',
+  PLUGIN_NAME = 'copilot-chat',
 
   ROLE = {
     USER = 'user',

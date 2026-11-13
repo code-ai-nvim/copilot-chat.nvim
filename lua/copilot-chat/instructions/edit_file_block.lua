@@ -8,7 +8,7 @@ For each change, use this markdown code block format:
 ```
 
 Example:
-```lua path={DIR}/lua/CopilotChat/init.lua start_line=40 end_line=50
+```lua path={DIR}/lua/copilot-chat/init.lua start_line=40 end_line=50
 local function example()
   print("This is an example function.")
 end

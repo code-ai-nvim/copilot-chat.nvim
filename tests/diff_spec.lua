@@ -1,6 +1,6 @@
-local diff = require('CopilotChat.utils.diff')
+local diff = require('copilot-chat.utils.diff')
 
-describe('CopilotChat.utils.diff', function()
+describe('copilot-chat.utils.diff', function()
   it('applies unified diff', function()
     local diff_text = [[
 --- a/foo.txt

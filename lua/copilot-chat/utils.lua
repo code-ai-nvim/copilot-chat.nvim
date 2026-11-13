@@ -4,18 +4,18 @@ local log = require('plenary.log')
 local M = {}
 M.timers = {}
 
---- Use CopilotChat.utils.curl.get instead
+--- Use copilot-chat.utils.curl.get instead
 ---@deprecated
 function M.curl_get(url, opts)
-  log.warn('M.curl_get is deprecated, use CopilotChat.utils.curl.get instead')
-  return require('CopilotChat.utils.curl').get(url, opts)
+  log.warn('M.curl_get is deprecated, use copilot-chat.utils.curl.get instead')
+  return require('copilot-chat.utils.curl').get(url, opts)
 end
 
---- Use CopilotChat.utils.curl.post instead
+--- Use copilot-chat.utils.curl.post instead
 ---@deprecated
 function M.curl_post(url, opts)
-  log.warn('M.curl_post is deprecated, use CopilotChat.utils.curl.post instead')
-  return require('CopilotChat.utils.curl').post(url, opts)
+  log.warn('M.curl_post is deprecated, use copilot-chat.utils.curl.post instead')
+  return require('copilot-chat.utils.curl').post(url, opts)
 end
 
 --- Convert arguments to a table

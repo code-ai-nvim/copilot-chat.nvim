@@ -542,6 +542,6 @@
   "skipCi": true,
   "repoType": "github",
   "repoHost": "https://github.com",
-  "projectName": "CopilotChat.nvim",
-  "projectOwner": "CopilotC-Nvim"
+  "projectName": "copilot-chat.nvim",
+  "projectOwner": "code-ai-nvim"
 }

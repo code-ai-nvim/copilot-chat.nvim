@@ -1,6 +1,6 @@
-local class = require('CopilotChat.utils.class')
+local class = require('copilot-chat.utils.class')
 
-describe('CopilotChat.utils.class', function()
+describe('copilot-chat.utils.class', function()
   it('creates a simple class', function()
     local Foo = class(function(self, x)
       self.x = x

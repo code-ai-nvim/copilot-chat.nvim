@@ -1,13 +1,13 @@
 local async = require('plenary.async')
 local log = require('plenary.log')
-local client = require('CopilotChat.client')
-local constants = require('CopilotChat.constants')
-local functions = require('CopilotChat.functions')
-local prompts = require('CopilotChat.prompts')
-local select = require('CopilotChat.select')
-local utils = require('CopilotChat.utils')
-local curl = require('CopilotChat.utils.curl')
-local orderedmap = require('CopilotChat.utils.orderedmap')
+local client = require('copilot-chat.client')
+local constants = require('copilot-chat.constants')
+local functions = require('copilot-chat.functions')
+local prompts = require('copilot-chat.prompts')
+local select = require('copilot-chat.select')
+local utils = require('copilot-chat.utils')
+local curl = require('copilot-chat.utils.curl')
+local orderedmap = require('copilot-chat.utils.orderedmap')
 
 local BLOCK_OUTPUT_FORMAT = '```%s\n%s\n```'
 
@@ -21,13 +21,13 @@ local EFFORT_NAMES = {
   max = 'Max',
 }
 
----@class CopilotChat
----@field config CopilotChat.config.Config
----@field chat CopilotChat.ui.chat.Chat
+---@class copilot_chat
+---@field config copilot_chat.config.Config
+---@field chat copilot_chat.ui.chat.Chat
 local M = setmetatable({}, {
   __index = function(t, key)
     if key == 'config' then
-      return require('CopilotChat.config')
+      return require('copilot-chat.config')
     end
 
     -- Lazy initialize
@@ -41,7 +41,7 @@ local M = setmetatable({}, {
   end,
 })
 
----@param config CopilotChat.config.Shared
+---@param config copilot_chat.config.Shared
 ---@param tool_name string
 ---@return boolean
 local function is_trusted_tool(config, tool_name)
@@ -75,7 +75,7 @@ end
 --- Process sticky values from prompt and config
 --- Extracts stickies from prompt, adds config-based stickies, stores them, returns clean prompt
 ---@param prompt string
----@param config CopilotChat.config.Shared
+---@param config copilot_chat.config.Shared
 ---@return string clean_prompt The prompt without sticky prefixes
 local function process_sticky(prompt, config)
   local existing_prompt = M.chat:get_message(constants.ROLE.USER)
@@ -200,7 +200,7 @@ local function finish(start_of_chat, remaining_tool_calls)
 end
 
 --- Show an error in the chat window.
----@param config CopilotChat.config.Shared
+---@param config copilot_chat.config.Shared
 ---@param cb function
 ---@return any
 local function handle_error(config, cb)
@@ -281,11 +281,11 @@ end
 
 -- Model picker helpers ------------------------------------------------------
 
----@alias CopilotChat.PickerStyle 'list'|'select'
+---@alias copilot_chat.PickerStyle 'list'|'select'
 
----@class CopilotChat.ModelGroup
----@field model CopilotChat.client.Model Base model (or standalone effort variant) with sanitized rates
----@field efforts CopilotChat.client.Model[] Reasoning effort variants of the base model
+---@class copilot_chat.ModelGroup
+---@field model copilot_chat.client.Model Base model (or standalone effort variant) with sanitized rates
+---@field efforts copilot_chat.client.Model[] Reasoning effort variants of the base model
 ---@field key table Sort key of the base model
 
 --- Get the letter (or numeric) suffix used to label a reasoning effort level.
@@ -305,7 +305,7 @@ end
 --- Resolve which entry of the fetched model list matches the currently stored selection.
 --- The selection is stored as a single id in `M.config.model` (for example `gpt-5.4:high`,
 --- where the suffix is the reasoning effort).
----@param models table<string, CopilotChat.client.Model>
+---@param models table<string, copilot_chat.client.Model>
 ---@return string? id The id of the matching entry in `models`, or nil if none matches
 local function resolve_selected_id(models)
   local current = M.config.model
@@ -336,7 +336,7 @@ local function resolve_selected_id(models)
 end
 
 --- Whether a model is shown in the picker.
----@param model CopilotChat.client.Model
+---@param model copilot_chat.client.Model
 ---@return boolean
 local function is_visible(model)
   return model.picker ~= false or utils.is_auto_model(model.id)
@@ -360,8 +360,8 @@ local function sanitize_rate(value, kind, id)
 end
 
 --- Shallow copy of a model with validated AI Credit rates.
----@param model CopilotChat.client.Model
----@return CopilotChat.client.Model
+---@param model copilot_chat.client.Model
+---@return copilot_chat.client.Model
 local function with_sanitized_rates(model)
   local copy = vim.tbl_extend('force', {}, model)
   copy.input_credits = sanitize_rate(model.input_credits, 'input', model.id)
@@ -371,7 +371,7 @@ end
 
 --- Sort key of a model: Auto first, then Auto:<provider>, then cheapest output
 --- (unknown cost last), then provider, request model and id.
----@param model CopilotChat.client.Model
+---@param model copilot_chat.client.Model
 ---@return table
 local function sort_key(model)
   local auto_rank = 2
@@ -405,8 +405,8 @@ end
 
 --- Group the visible models into base models with their reasoning effort variants,
 --- sorted in display order. Rates are validated here, once per model.
----@param models table<string, CopilotChat.client.Model>
----@return CopilotChat.ModelGroup[]
+---@param models table<string, copilot_chat.client.Model>
+---@return copilot_chat.ModelGroup[]
 local function group_models(models)
   local groups = {}
   local by_base = {}
@@ -459,7 +459,7 @@ end
 --- Build a picker choice. The model must already have validated rates.
 --- `reasoning_effort_index` is the local position inside the group (the one used by the
 --- code), which stays unique even if the provider indexes collide.
----@param model CopilotChat.client.Model
+---@param model copilot_chat.client.Model
 ---@param model_index integer
 ---@param effort_index integer?
 ---@param selected_id string?
@@ -476,7 +476,7 @@ end
 
 --- Build the choices (models followed by their efforts) and the code lookup table.
 --- Every choice gets a `code` such as `3` (model) or `3b` (model + effort).
----@param groups CopilotChat.ModelGroup[]
+---@param groups copilot_chat.ModelGroup[]
 ---@param selected_id string?
 ---@return table[] choices
 ---@return table<string, table> codes Lowercase code to choice
@@ -538,7 +538,7 @@ end
 
 --- Format a model line: `<marker><code>. <description>`.
 ---@param choice table
----@param style CopilotChat.PickerStyle
+---@param style copilot_chat.PickerStyle
 ---@return string
 local function format_model_line(choice, style)
   local marker = choice.selected and '* ' or (style == 'list' and '  ' or '')
@@ -547,7 +547,7 @@ end
 
 --- Format an effort entry: `<code>. <Effort Name>` with the selection marker.
 ---@param choice table
----@param style CopilotChat.PickerStyle
+---@param style copilot_chat.PickerStyle
 ---@return string
 local function format_effort_line(choice, style)
   local text = string.format('%s. %s', choice.code, effort_name(choice.reasoning_effort))
@@ -559,7 +559,7 @@ local function format_effort_line(choice, style)
 end
 
 ---@param choice table
----@param style CopilotChat.PickerStyle
+---@param style copilot_chat.PickerStyle
 ---@return string
 local function format_choice(choice, style)
   if choice.reasoning_effort_index then
@@ -656,7 +656,7 @@ function M.select_model()
 end
 
 --- Select a prompt template to use.
----@param config CopilotChat.config.Shared?
+---@param config copilot_chat.config.Shared?
 function M.select_prompt(config)
   local prompt_list = prompts.list_prompts()
   local keys = vim.tbl_keys(prompt_list)
@@ -689,7 +689,7 @@ function M.select_prompt(config)
 end
 
 --- Open the chat window.
----@param config CopilotChat.config.Shared?
+---@param config copilot_chat.config.Shared?
 function M.open(config)
   config = vim.tbl_deep_extend('force', M.config, config or {})
   utils.return_to_normal_mode()
@@ -726,7 +726,7 @@ function M.close()
 end
 
 --- Toggle the chat window.
----@param config CopilotChat.config.Shared?
+---@param config copilot_chat.config.Shared?
 function M.toggle(config)
   if M.chat:visible() then
     M.close()
@@ -737,7 +737,7 @@ end
 
 --- Ask a question to the Copilot model.
 ---@param prompt string?
----@param config CopilotChat.config.Shared?
+---@param config copilot_chat.config.Shared?
 function M.ask(prompt, config)
   prompt = prompt or ''
   if prompt == '' then
@@ -1100,7 +1100,7 @@ function M.log_level(level)
 end
 
 --- Set up the plugin
----@param config CopilotChat.config.Config?
+---@param config copilot_chat.config.Config?
 function M.setup(config)
   for k, v in pairs(vim.tbl_deep_extend('force', M.config, config or {})) do
     M.config[k] = v
@@ -1133,17 +1133,17 @@ function M.setup(config)
   end)
 
   -- Initialize chat
-  require('CopilotChat.utils.notify').clear()
+  require('copilot-chat.utils.notify').clear()
   if M.chat then
     M.chat:close()
     M.chat:delete()
   else
-    M.chat = require('CopilotChat.ui.chat')(M.config, function(bufnr)
+    M.chat = require('copilot-chat.ui.chat')(M.config, function(bufnr)
       for name, _ in pairs(M.config.mappings) do
         map_key(name, bufnr)
       end
 
-      require('CopilotChat.completion').enable(bufnr, M.config.chat_autocomplete)
+      require('copilot-chat.completion').enable(bufnr, M.config.chat_autocomplete)
 
       vim.api.nvim_create_autocmd({ 'BufEnter', 'BufLeave' }, {
         buffer = bufnr,

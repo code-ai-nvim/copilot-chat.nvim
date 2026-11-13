@@ -1,6 +1,6 @@
-local orderedmap = require('CopilotChat.utils.orderedmap')
+local orderedmap = require('copilot-chat.utils.orderedmap')
 
-describe('CopilotChat.utils.orderedmap', function()
+describe('copilot-chat.utils.orderedmap', function()
   it('sets and gets values', function()
     local map = orderedmap()
     map:set('a', 1)

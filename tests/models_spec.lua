@@ -1,7 +1,7 @@
-describe('CopilotChat copilot provider models', function()
-  local client = require('CopilotChat.client')
-  local curl = require('CopilotChat.utils.curl')
-  local providers = require('CopilotChat.config.providers')
+describe('copilot-chat copilot provider models', function()
+  local client = require('copilot-chat.client')
+  local curl = require('copilot-chat.utils.curl')
+  local providers = require('copilot-chat.config.providers')
   local log = require('plenary.log')
 
   local restores = {}
@@ -375,7 +375,7 @@ describe('CopilotChat copilot provider models', function()
   end)
 
   it('resolves model with reasoning effort from config and prompt colon syntax', function()
-    local prompts = require('CopilotChat.prompts')
+    local prompts = require('copilot-chat.prompts')
     local m = model('gpt-5.4', true, { '/responses' })
     m.capabilities.supports.reasoning_effort = { 'low', 'medium', 'high' }
     serve_models(m)
@@ -471,4 +471,3 @@ describe('CopilotChat copilot provider models', function()
     end)
   end)
 end)
-

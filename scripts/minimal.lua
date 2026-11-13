@@ -11,6 +11,6 @@ for name, url in pairs({
   vim.opt.runtimepath:append(install_path)
 end
 
-require('CopilotChat').setup({
+require('copilot-chat').setup({
   -- Add your configuration here
 })

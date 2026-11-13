@@ -2,13 +2,13 @@
 
 # Copilot Chat for Neovim
 
-[![Release](https://img.shields.io/github/v/release/CopilotC-Nvim/CopilotChat.nvim?logo=github&style=for-the-badge)](https://github.com/CopilotC-Nvim/CopilotChat.nvim/releases/latest)
-[![Build](https://img.shields.io/github/actions/workflow/status/CopilotC-Nvim/CopilotChat.nvim/ci.yml?logo=github&style=for-the-badge)](https://github.com/CopilotC-Nvim/CopilotChat.nvim/actions/workflows/ci.yml)
-[![Documentation](https://img.shields.io/badge/documentation-up-green.svg?logo=vim&style=for-the-badge)](https://copilotc-nvim.github.io/CopilotChat.nvim/)
+[![Release](https://img.shields.io/github/v/release/code-ai-nvim/copilot-chat.nvim?logo=github&style=for-the-badge)](https://github.com/code-ai-nvim/copilot-chat.nvim/releases/latest)
+[![Build](https://img.shields.io/github/actions/workflow/status/code-ai-nvim/copilot-chat.nvim/ci.yml?logo=github&style=for-the-badge)](https://github.com/code-ai-nvim/copilot-chat.nvim/actions/workflows/ci.yml)
+[![Documentation](https://img.shields.io/badge/documentation-up-green.svg?logo=vim&style=for-the-badge)](https://code-ai-nvim.github.io/copilot-chat.nvim/)
 
-[![Contributors](https://img.shields.io/github/all-contributors/CopilotC-Nvim/CopilotChat.nvim?color=ee8449&logo=github&label=contributors&style=for-the-badge)](#contributors)
+[![Contributors](https://img.shields.io/github/all-contributors/code-ai-nvim/copilot-chat.nvim?color=ee8449&logo=github&label=contributors&style=for-the-badge)](#contributors)
 [![Discord](https://img.shields.io/discord/1200633211236122665?logo=discord&label=discord&style=for-the-badge)](https://discord.gg/vy6hJsTWaZ)
-[![Dotfyle](https://dotfyle.com/plugins/CopilotC-Nvim/CopilotChat.nvim/shield?style=for-the-badge)](https://dotfyle.com/plugins/CopilotC-Nvim/CopilotChat.nvim)
+[![Dotfyle](https://dotfyle.com/plugins/code-ai-nvim/copilot-chat.nvim/shield?style=for-the-badge)](https://dotfyle.com/plugins/code-ai-nvim/copilot-chat.nvim)
 
 ![image](https://github.com/user-attachments/assets/9ee30811-0fb8-4500-91f6-34ea6b26adea)
 
@@ -16,7 +16,7 @@ https://github.com/user-attachments/assets/8cad5643-63b2-4641-a5c4-68bc313f20e6
 
 </div>
 
-CopilotChat.nvim brings GitHub Copilot Chat capabilities directly into Neovim with a focus on transparency and user control.
+copilot-chat.nvim brings GitHub Copilot Chat capabilities directly into Neovim with a focus on transparency and user control.
 
 - 🤖 **Multiple AI Models** - GitHub Copilot (including GPT-4o, Gemini 2.5 Pro, Claude 4 Sonnet, Claude 3.7 Sonnet, Claude 3.5 Sonnet, o3-mini, o4-mini) + custom providers (Ollama, Mistral.ai). The exact list of available models depends on your [GitHub Copilot settings](https://github.com/settings/copilot/features) and the models provided by GitHub's API.
 - 🔧 **Tool Calling** - LLM can call workspace functions (file reading, git operations, search) with manual approval or automatic execution for trusted tools
@@ -25,7 +25,7 @@ CopilotChat.nvim brings GitHub Copilot Chat capabilities directly into Neovim wi
 - 🎯 **Smart Prompts** - Composable templates and sticky prompts for consistent context
 - ⚡ **Token Efficient** - Resource replacement prevents duplicate context, history management via tiktoken counting
 - 🔗 **Scriptable** - Comprehensive Lua API for automation and headless mode operation
-- 🔌 **Extensible** - [Custom functions](https://github.com/CopilotC-Nvim/CopilotChat.nvim/discussions/categories/functions) and [providers](https://github.com/CopilotC-Nvim/CopilotChat.nvim/discussions/categories/providers), plus integrations like [mcphub.nvim](https://github.com/ravitemer/mcphub.nvim)
+- 🔌 **Extensible** - [Custom functions](https://github.com/code-ai-nvim/copilot-chat.nvim/discussions/categories/functions) and [providers](https://github.com/code-ai-nvim/copilot-chat.nvim/discussions/categories/providers), plus integrations like [mcphub.nvim](https://github.com/ravitemer/mcphub.nvim)
 
 # Installation
 
@@ -64,7 +64,7 @@ For various plugin pickers to work correctly, you need to replace `vim.ui.select
 ```lua
 return {
   {
-    "CopilotC-Nvim/CopilotChat.nvim",
+    "code-ai-nvim/copilot-chat.nvim",
     dependencies = {
       { "nvim-lua/plenary.nvim", branch = "master" },
     },
@@ -81,11 +81,11 @@ return {
 ```vim
 call plug#begin()
 Plug 'nvim-lua/plenary.nvim'
-Plug 'CopilotC-Nvim/CopilotChat.nvim'
+Plug 'code-ai-nvim/copilot-chat.nvim'
 call plug#end()
 
 lua << EOF
-require("CopilotChat").setup()
+require("copilot-chat").setup()
 EOF
 ```
 
@@ -151,7 +151,7 @@ Auto is listed first. Other models are ordered by output rate, lowest first, wit
 > vim.keymap.set('i', '<S-Tab>', 'copilot#Accept("\\<S-Tab>")', { expr = true, replace_keycodes = false })
 > ```
 >
-> Or customize CopilotChat keymaps in your config.
+> Or customize copilot-chat keymaps in your config.
 
 ## Predefined Functions
 
@@ -236,7 +236,7 @@ By default, tool calls require manual approval. Configure `trusted_tools` to aut
 
 # Configuration
 
-For all available configuration options, see [`lua/CopilotChat/config.lua`](lua/CopilotChat/config.lua).
+For all available configuration options, see [`lua/copilot-chat/config.lua`](lua/copilot-chat/config.lua).
 
 ## Quick Setup
 
@@ -423,8 +423,8 @@ Add custom AI providers:
       get_url = function(opts) return 'https://api.example.com/chat' end,
       get_headers = function() return { ['Authorization'] = 'Bearer ' .. api_key } end,
       get_models = function() return { { id = 'gpt-5-mini', name = 'GPT-5 mini model' } } end,
-      prepare_input = require('CopilotChat.config.providers').copilot.prepare_input,
-      prepare_output = require('CopilotChat.config.providers').copilot.prepare_output,
+      prepare_input = require('copilot-chat.config.providers').copilot.prepare_input,
+      prepare_output = require('copilot-chat.config.providers').copilot.prepare_output,
     }
   }
 }
@@ -444,16 +444,16 @@ Add custom AI providers:
   get_headers?(): table<string,string>, number?,
 
   -- Optional: Get API endpoint URL
-  get_url?(opts: CopilotChat.Provider.options): string,
+  get_url?(opts: copilot_chat.Provider.options): string,
 
   -- Optional: Prepare request input
-  prepare_input?(inputs: table<CopilotChat.Provider.input>, opts: CopilotChat.Provider.options): table,
+  prepare_input?(inputs: table<copilot_chat.Provider.input>, opts: copilot_chat.Provider.options): table,
 
   -- Optional: Prepare response output
-  prepare_output?(output: table, opts: CopilotChat.Provider.options): CopilotChat.Provider.output,
+  prepare_output?(output: table, opts: copilot_chat.Provider.options): copilot_chat.Provider.output,
 
   -- Optional: Get available models
-  get_models?(headers: table): table<CopilotChat.Provider.model>,
+  get_models?(headers: table): table<copilot_chat.Provider.model>,
 
   -- Optional: Resolve a user-facing model id to a provider model id.
   -- Second return value is optional extra request headers (e.g. Copilot-Session-Token).
@@ -471,7 +471,7 @@ Add custom AI providers:
 ## Core
 
 ```lua
-local chat = require('CopilotChat')
+local chat = require('copilot-chat')
 
 -- Basic Chat Functions
 chat.ask(prompt, config)      -- Ask a question with optional config
@@ -501,7 +501,7 @@ chat.log_level(level)         -- Set log level (debug, info, etc.)
 You can also access the chat window UI methods through the `chat.chat` object:
 
 ```lua
-local window = require('CopilotChat').chat
+local window = require('copilot-chat').chat
 
 -- Chat UI State
 window:visible()             -- Check if chat window is visible
@@ -534,7 +534,7 @@ window:overlay(opts)         -- Show overlay with specified options
 ## Prompt parser
 
 ```lua
-local parser = require('CopilotChat.prompts')
+local parser = require('copilot-chat.prompts')
 
 parser.resolve_prompt()         -- Resolve prompt references
 parser.resolve_tools()          -- Resolve tools shared with the model via @...
@@ -546,30 +546,30 @@ parser.resolve_model()          -- Resolve model from prompt (WARN: async, requi
 
 ```lua
 -- Open chat, ask a question and handle response
-require('CopilotChat').open()
-require('CopilotChat').ask('#buffer Explain this code', {
+require('copilot-chat').open()
+require('copilot-chat').ask('#buffer Explain this code', {
   callback = function(response)
     vim.notify('Got response: ' .. vim.trim(response.content):sub(1, 50) .. '...')
   end,
 })
 
 -- Save and load chat history
-require('CopilotChat').save('my_debugging_session')
-require('CopilotChat').load('my_debugging_session')
+require('copilot-chat').save('my_debugging_session')
+require('copilot-chat').load('my_debugging_session')
 
 -- Use custom sticky and model
-require('CopilotChat').ask('How can I optimize this?', {
+require('copilot-chat').ask('How can I optimize this?', {
   model = 'gpt-5-mini',
   sticky = { '#buffer', '#gitdiff:staged' },
 })
 
 -- Automatically trust a small read-only tool set
-require('CopilotChat').setup({
+require('copilot-chat').setup({
   trusted_tools = { 'file', 'glob', 'grep' },
 })
 ```
 
-For more examples, see the [examples wiki page](https://github.com/CopilotC-Nvim/CopilotChat.nvim/wiki/Examples-and-Tips).
+For more examples, see the [examples wiki page](https://github.com/code-ai-nvim/copilot-chat.nvim/wiki/Examples-and-Tips).
 
 # Development
 
@@ -580,8 +580,8 @@ To set up the environment:
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/CopilotC-Nvim/CopilotChat.nvim
-cd CopilotChat.nvim
+git clone https://github.com/code-ai-nvim/copilot-chat.nvim
+cd copilot-chat.nvim
 ```
 
 2. Install development dependencies:
@@ -622,102 +622,102 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/gptlang"><img src="https://avatars.githubusercontent.com/u/121417512?v=4?s=100" width="100px;" alt="gptlang"/><br /><sub><b>gptlang</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=gptlang" title="Code">💻</a> <a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=gptlang" title="Documentation">📖</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://productsway.com/"><img src="https://avatars.githubusercontent.com/u/870029?v=4?s=100" width="100px;" alt="Dung Duc Huynh (Kaka)"/><br /><sub><b>Dung Duc Huynh (Kaka)</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=jellydn" title="Code">💻</a> <a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=jellydn" title="Documentation">📖</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://qoobes.dev"><img src="https://avatars.githubusercontent.com/u/58834655?v=4?s=100" width="100px;" alt="Ahmed Haracic"/><br /><sub><b>Ahmed Haracic</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=qoobes" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://youtube.com/@ziontee113"><img src="https://avatars.githubusercontent.com/u/102876811?v=4?s=100" width="100px;" alt="Trí Thiện Nguyễn"/><br /><sub><b>Trí Thiện Nguyễn</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=ziontee113" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Cassius0924"><img src="https://avatars.githubusercontent.com/u/62874592?v=4?s=100" width="100px;" alt="He Zhizhou"/><br /><sub><b>He Zhizhou</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=Cassius0924" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://www.linkedin.com/in/guruprakashrajakkannu/"><img src="https://avatars.githubusercontent.com/u/9963717?v=4?s=100" width="100px;" alt="Guruprakash Rajakkannu"/><br /><sub><b>Guruprakash Rajakkannu</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=rguruprakash" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/kristofka"><img src="https://avatars.githubusercontent.com/u/140354?v=4?s=100" width="100px;" alt="kristofka"/><br /><sub><b>kristofka</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=kristofka" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/gptlang"><img src="https://avatars.githubusercontent.com/u/121417512?v=4?s=100" width="100px;" alt="gptlang"/><br /><sub><b>gptlang</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=gptlang" title="Code">💻</a> <a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=gptlang" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://productsway.com/"><img src="https://avatars.githubusercontent.com/u/870029?v=4?s=100" width="100px;" alt="Dung Duc Huynh (Kaka)"/><br /><sub><b>Dung Duc Huynh (Kaka)</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=jellydn" title="Code">💻</a> <a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=jellydn" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://qoobes.dev"><img src="https://avatars.githubusercontent.com/u/58834655?v=4?s=100" width="100px;" alt="Ahmed Haracic"/><br /><sub><b>Ahmed Haracic</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=qoobes" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://youtube.com/@ziontee113"><img src="https://avatars.githubusercontent.com/u/102876811?v=4?s=100" width="100px;" alt="Trí Thiện Nguyễn"/><br /><sub><b>Trí Thiện Nguyễn</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=ziontee113" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Cassius0924"><img src="https://avatars.githubusercontent.com/u/62874592?v=4?s=100" width="100px;" alt="He Zhizhou"/><br /><sub><b>He Zhizhou</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=Cassius0924" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://www.linkedin.com/in/guruprakashrajakkannu/"><img src="https://avatars.githubusercontent.com/u/9963717?v=4?s=100" width="100px;" alt="Guruprakash Rajakkannu"/><br /><sub><b>Guruprakash Rajakkannu</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=rguruprakash" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/kristofka"><img src="https://avatars.githubusercontent.com/u/140354?v=4?s=100" width="100px;" alt="kristofka"/><br /><sub><b>kristofka</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=kristofka" title="Code">💻</a></td>
     </tr>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/PostCyberPunk"><img src="https://avatars.githubusercontent.com/u/134976996?v=4?s=100" width="100px;" alt="PostCyberPunk"/><br /><sub><b>PostCyberPunk</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=PostCyberPunk" title="Documentation">📖</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ktns"><img src="https://avatars.githubusercontent.com/u/1302759?v=4?s=100" width="100px;" alt="Katsuhiko Nishimra"/><br /><sub><b>Katsuhiko Nishimra</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=ktns" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/errnoh"><img src="https://avatars.githubusercontent.com/u/373946?v=4?s=100" width="100px;" alt="Erno Hopearuoho"/><br /><sub><b>Erno Hopearuoho</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=errnoh" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/shaungarwood"><img src="https://avatars.githubusercontent.com/u/4156525?v=4?s=100" width="100px;" alt="Shaun Garwood"/><br /><sub><b>Shaun Garwood</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=shaungarwood" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/neutrinoA4"><img src="https://avatars.githubusercontent.com/u/122616073?v=4?s=100" width="100px;" alt="neutrinoA4"/><br /><sub><b>neutrinoA4</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=neutrinoA4" title="Code">💻</a> <a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=neutrinoA4" title="Documentation">📖</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/banjocat"><img src="https://avatars.githubusercontent.com/u/3247309?v=4?s=100" width="100px;" alt="Jack Muratore"/><br /><sub><b>Jack Muratore</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=banjocat" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/AdrielVelazquez"><img src="https://avatars.githubusercontent.com/u/3443378?v=4?s=100" width="100px;" alt="Adriel Velazquez"/><br /><sub><b>Adriel Velazquez</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=AdrielVelazquez" title="Code">💻</a> <a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=AdrielVelazquez" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/PostCyberPunk"><img src="https://avatars.githubusercontent.com/u/134976996?v=4?s=100" width="100px;" alt="PostCyberPunk"/><br /><sub><b>PostCyberPunk</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=PostCyberPunk" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ktns"><img src="https://avatars.githubusercontent.com/u/1302759?v=4?s=100" width="100px;" alt="Katsuhiko Nishimra"/><br /><sub><b>Katsuhiko Nishimra</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=ktns" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/errnoh"><img src="https://avatars.githubusercontent.com/u/373946?v=4?s=100" width="100px;" alt="Erno Hopearuoho"/><br /><sub><b>Erno Hopearuoho</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=errnoh" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/shaungarwood"><img src="https://avatars.githubusercontent.com/u/4156525?v=4?s=100" width="100px;" alt="Shaun Garwood"/><br /><sub><b>Shaun Garwood</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=shaungarwood" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/neutrinoA4"><img src="https://avatars.githubusercontent.com/u/122616073?v=4?s=100" width="100px;" alt="neutrinoA4"/><br /><sub><b>neutrinoA4</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=neutrinoA4" title="Code">💻</a> <a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=neutrinoA4" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/banjocat"><img src="https://avatars.githubusercontent.com/u/3247309?v=4?s=100" width="100px;" alt="Jack Muratore"/><br /><sub><b>Jack Muratore</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=banjocat" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/AdrielVelazquez"><img src="https://avatars.githubusercontent.com/u/3443378?v=4?s=100" width="100px;" alt="Adriel Velazquez"/><br /><sub><b>Adriel Velazquez</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=AdrielVelazquez" title="Code">💻</a> <a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=AdrielVelazquez" title="Documentation">📖</a></td>
     </tr>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/deathbeam"><img src="https://avatars.githubusercontent.com/u/5115805?v=4?s=100" width="100px;" alt="Tomas Slusny"/><br /><sub><b>Tomas Slusny</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=deathbeam" title="Code">💻</a> <a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=deathbeam" title="Documentation">📖</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="http://nisalvd.netlify.com/"><img src="https://avatars.githubusercontent.com/u/30633436?v=4?s=100" width="100px;" alt="Nisal"/><br /><sub><b>Nisal</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=nisalVD" title="Documentation">📖</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="http://www.gaardhus.dk"><img src="https://avatars.githubusercontent.com/u/46934916?v=4?s=100" width="100px;" alt="Tobias Gårdhus"/><br /><sub><b>Tobias Gårdhus</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=gaardhus" title="Documentation">📖</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://www.patreon.com/PetrDlouhy"><img src="https://avatars.githubusercontent.com/u/156755?v=4?s=100" width="100px;" alt="Petr Dlouhý"/><br /><sub><b>Petr Dlouhý</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=PetrDlouhy" title="Documentation">📖</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="http://www.dylanmadisetti.com"><img src="https://avatars.githubusercontent.com/u/2689338?v=4?s=100" width="100px;" alt="Dylan Madisetti"/><br /><sub><b>Dylan Madisetti</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=dmadisetti" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/aweis89"><img src="https://avatars.githubusercontent.com/u/5186956?v=4?s=100" width="100px;" alt="Aaron Weisberg"/><br /><sub><b>Aaron Weisberg</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=aweis89" title="Code">💻</a> <a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=aweis89" title="Documentation">📖</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/tlacuilose"><img src="https://avatars.githubusercontent.com/u/65783495?v=4?s=100" width="100px;" alt="Jose Tlacuilo"/><br /><sub><b>Jose Tlacuilo</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=tlacuilose" title="Code">💻</a> <a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=tlacuilose" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/deathbeam"><img src="https://avatars.githubusercontent.com/u/5115805?v=4?s=100" width="100px;" alt="Tomas Slusny"/><br /><sub><b>Tomas Slusny</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=deathbeam" title="Code">💻</a> <a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=deathbeam" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://nisalvd.netlify.com/"><img src="https://avatars.githubusercontent.com/u/30633436?v=4?s=100" width="100px;" alt="Nisal"/><br /><sub><b>Nisal</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=nisalVD" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://www.gaardhus.dk"><img src="https://avatars.githubusercontent.com/u/46934916?v=4?s=100" width="100px;" alt="Tobias Gårdhus"/><br /><sub><b>Tobias Gårdhus</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=gaardhus" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://www.patreon.com/PetrDlouhy"><img src="https://avatars.githubusercontent.com/u/156755?v=4?s=100" width="100px;" alt="Petr Dlouhý"/><br /><sub><b>Petr Dlouhý</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=PetrDlouhy" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://www.dylanmadisetti.com"><img src="https://avatars.githubusercontent.com/u/2689338?v=4?s=100" width="100px;" alt="Dylan Madisetti"/><br /><sub><b>Dylan Madisetti</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=dmadisetti" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/aweis89"><img src="https://avatars.githubusercontent.com/u/5186956?v=4?s=100" width="100px;" alt="Aaron Weisberg"/><br /><sub><b>Aaron Weisberg</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=aweis89" title="Code">💻</a> <a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=aweis89" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/tlacuilose"><img src="https://avatars.githubusercontent.com/u/65783495?v=4?s=100" width="100px;" alt="Jose Tlacuilo"/><br /><sub><b>Jose Tlacuilo</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=tlacuilose" title="Code">💻</a> <a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=tlacuilose" title="Documentation">📖</a></td>
     </tr>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="http://kevintraver.com"><img src="https://avatars.githubusercontent.com/u/196406?v=4?s=100" width="100px;" alt="Kevin Traver"/><br /><sub><b>Kevin Traver</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=kevintraver" title="Code">💻</a> <a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=kevintraver" title="Documentation">📖</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/D7ry"><img src="https://avatars.githubusercontent.com/u/92609548?v=4?s=100" width="100px;" alt="dTry"/><br /><sub><b>dTry</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=D7ry" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://blog.ornew.io"><img src="https://avatars.githubusercontent.com/u/19766770?v=4?s=100" width="100px;" alt="Arata Furukawa"/><br /><sub><b>Arata Furukawa</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=ornew" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/lingjie00"><img src="https://avatars.githubusercontent.com/u/64540764?v=4?s=100" width="100px;" alt="Ling"/><br /><sub><b>Ling</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=lingjie00" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/frolvanya"><img src="https://avatars.githubusercontent.com/u/59515280?v=4?s=100" width="100px;" alt="Ivan Frolov"/><br /><sub><b>Ivan Frolov</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=frolvanya" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="http://www.folkelemaitre.com"><img src="https://avatars.githubusercontent.com/u/292349?v=4?s=100" width="100px;" alt="Folke Lemaitre"/><br /><sub><b>Folke Lemaitre</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=folke" title="Code">💻</a> <a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=folke" title="Documentation">📖</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/GitMurf"><img src="https://avatars.githubusercontent.com/u/64155612?v=4?s=100" width="100px;" alt="GitMurf"/><br /><sub><b>GitMurf</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=GitMurf" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://kevintraver.com"><img src="https://avatars.githubusercontent.com/u/196406?v=4?s=100" width="100px;" alt="Kevin Traver"/><br /><sub><b>Kevin Traver</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=kevintraver" title="Code">💻</a> <a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=kevintraver" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/D7ry"><img src="https://avatars.githubusercontent.com/u/92609548?v=4?s=100" width="100px;" alt="dTry"/><br /><sub><b>dTry</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=D7ry" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://blog.ornew.io"><img src="https://avatars.githubusercontent.com/u/19766770?v=4?s=100" width="100px;" alt="Arata Furukawa"/><br /><sub><b>Arata Furukawa</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=ornew" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/lingjie00"><img src="https://avatars.githubusercontent.com/u/64540764?v=4?s=100" width="100px;" alt="Ling"/><br /><sub><b>Ling</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=lingjie00" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/frolvanya"><img src="https://avatars.githubusercontent.com/u/59515280?v=4?s=100" width="100px;" alt="Ivan Frolov"/><br /><sub><b>Ivan Frolov</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=frolvanya" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://www.folkelemaitre.com"><img src="https://avatars.githubusercontent.com/u/292349?v=4?s=100" width="100px;" alt="Folke Lemaitre"/><br /><sub><b>Folke Lemaitre</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=folke" title="Code">💻</a> <a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=folke" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/GitMurf"><img src="https://avatars.githubusercontent.com/u/64155612?v=4?s=100" width="100px;" alt="GitMurf"/><br /><sub><b>GitMurf</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=GitMurf" title="Code">💻</a></td>
     </tr>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="http://dimalip.in"><img src="https://avatars.githubusercontent.com/u/6877858?v=4?s=100" width="100px;" alt="Dmitrii Lipin"/><br /><sub><b>Dmitrii Lipin</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=festeh" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://nvimer.org"><img src="https://avatars.githubusercontent.com/u/41784264?v=4?s=100" width="100px;" alt="jinzhongjia"/><br /><sub><b>jinzhongjia</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=jinzhongjia" title="Documentation">📖</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/guill"><img src="https://avatars.githubusercontent.com/u/3157454?v=4?s=100" width="100px;" alt="guill"/><br /><sub><b>guill</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=guill" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/sjonpaulbrown-cc"><img src="https://avatars.githubusercontent.com/u/81941908?v=4?s=100" width="100px;" alt="Sjon-Paul Brown"/><br /><sub><b>Sjon-Paul Brown</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=sjonpaulbrown-cc" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/renxzen"><img src="https://avatars.githubusercontent.com/u/13023797?v=4?s=100" width="100px;" alt="Renzo Mondragón"/><br /><sub><b>Renzo Mondragón</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=renxzen" title="Code">💻</a> <a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=renxzen" title="Documentation">📖</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/fjchen7"><img src="https://avatars.githubusercontent.com/u/10106636?v=4?s=100" width="100px;" alt="fjchen7"/><br /><sub><b>fjchen7</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=fjchen7" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/radwo"><img src="https://avatars.githubusercontent.com/u/184065?v=4?s=100" width="100px;" alt="Radosław Woźniak"/><br /><sub><b>Radosław Woźniak</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=radwo" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://dimalip.in"><img src="https://avatars.githubusercontent.com/u/6877858?v=4?s=100" width="100px;" alt="Dmitrii Lipin"/><br /><sub><b>Dmitrii Lipin</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=festeh" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://nvimer.org"><img src="https://avatars.githubusercontent.com/u/41784264?v=4?s=100" width="100px;" alt="jinzhongjia"/><br /><sub><b>jinzhongjia</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=jinzhongjia" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/guill"><img src="https://avatars.githubusercontent.com/u/3157454?v=4?s=100" width="100px;" alt="guill"/><br /><sub><b>guill</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=guill" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/sjonpaulbrown-cc"><img src="https://avatars.githubusercontent.com/u/81941908?v=4?s=100" width="100px;" alt="Sjon-Paul Brown"/><br /><sub><b>Sjon-Paul Brown</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=sjonpaulbrown-cc" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/renxzen"><img src="https://avatars.githubusercontent.com/u/13023797?v=4?s=100" width="100px;" alt="Renzo Mondragón"/><br /><sub><b>Renzo Mondragón</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=renxzen" title="Code">💻</a> <a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=renxzen" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/fjchen7"><img src="https://avatars.githubusercontent.com/u/10106636?v=4?s=100" width="100px;" alt="fjchen7"/><br /><sub><b>fjchen7</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=fjchen7" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/radwo"><img src="https://avatars.githubusercontent.com/u/184065?v=4?s=100" width="100px;" alt="Radosław Woźniak"/><br /><sub><b>Radosław Woźniak</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=radwo" title="Code">💻</a></td>
     </tr>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/JakubPecenka"><img src="https://avatars.githubusercontent.com/u/87969308?v=4?s=100" width="100px;" alt="JakubPecenka"/><br /><sub><b>JakubPecenka</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=JakubPecenka" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/thomastthai"><img src="https://avatars.githubusercontent.com/u/16532581?v=4?s=100" width="100px;" alt="thomastthai"/><br /><sub><b>thomastthai</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=thomastthai" title="Documentation">📖</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://lisk.in/"><img src="https://avatars.githubusercontent.com/u/300342?v=4?s=100" width="100px;" alt="Tomáš Janoušek"/><br /><sub><b>Tomáš Janoušek</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=liskin" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Moriango"><img src="https://avatars.githubusercontent.com/u/43554061?v=4?s=100" width="100px;" alt="Toddneal Stallworth"/><br /><sub><b>Toddneal Stallworth</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=Moriango" title="Documentation">📖</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/taketwo"><img src="https://avatars.githubusercontent.com/u/1241736?v=4?s=100" width="100px;" alt="Sergey Alexandrov"/><br /><sub><b>Sergey Alexandrov</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=taketwo" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/lemeb"><img src="https://avatars.githubusercontent.com/u/7331643?v=4?s=100" width="100px;" alt="Léopold Mebazaa"/><br /><sub><b>Léopold Mebazaa</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=lemeb" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://atko.space"><img src="https://avatars.githubusercontent.com/u/14937572?v=4?s=100" width="100px;" alt="JunKi Jin"/><br /><sub><b>JunKi Jin</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=atkodev" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/JakubPecenka"><img src="https://avatars.githubusercontent.com/u/87969308?v=4?s=100" width="100px;" alt="JakubPecenka"/><br /><sub><b>JakubPecenka</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=JakubPecenka" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/thomastthai"><img src="https://avatars.githubusercontent.com/u/16532581?v=4?s=100" width="100px;" alt="thomastthai"/><br /><sub><b>thomastthai</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=thomastthai" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://lisk.in/"><img src="https://avatars.githubusercontent.com/u/300342?v=4?s=100" width="100px;" alt="Tomáš Janoušek"/><br /><sub><b>Tomáš Janoušek</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=liskin" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Moriango"><img src="https://avatars.githubusercontent.com/u/43554061?v=4?s=100" width="100px;" alt="Toddneal Stallworth"/><br /><sub><b>Toddneal Stallworth</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=Moriango" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/taketwo"><img src="https://avatars.githubusercontent.com/u/1241736?v=4?s=100" width="100px;" alt="Sergey Alexandrov"/><br /><sub><b>Sergey Alexandrov</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=taketwo" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/lemeb"><img src="https://avatars.githubusercontent.com/u/7331643?v=4?s=100" width="100px;" alt="Léopold Mebazaa"/><br /><sub><b>Léopold Mebazaa</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=lemeb" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://atko.space"><img src="https://avatars.githubusercontent.com/u/14937572?v=4?s=100" width="100px;" alt="JunKi Jin"/><br /><sub><b>JunKi Jin</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=atkodev" title="Code">💻</a></td>
     </tr>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/abdennourzahaf"><img src="https://avatars.githubusercontent.com/u/62243290?v=4?s=100" width="100px;" alt="abdennourzahaf"/><br /><sub><b>abdennourzahaf</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=abdennourzahaf" title="Documentation">📖</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/josiahdenton"><img src="https://avatars.githubusercontent.com/u/44758384?v=4?s=100" width="100px;" alt="Josiah"/><br /><sub><b>Josiah</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=josiahdenton" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/tku137"><img src="https://avatars.githubusercontent.com/u/3052212?v=4?s=100" width="100px;" alt="Tony Fischer"/><br /><sub><b>Tony Fischer</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=tku137" title="Code">💻</a> <a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=tku137" title="Documentation">📖</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://qiita.com/program3152019"><img src="https://avatars.githubusercontent.com/u/64008205?v=4?s=100" width="100px;" alt="Kohei Wada"/><br /><sub><b>Kohei Wada</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=Kohei-Wada" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://zags.dev"><img src="https://avatars.githubusercontent.com/u/79172513?v=4?s=100" width="100px;" alt="Sebastian Yaghoubi"/><br /><sub><b>Sebastian Yaghoubi</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=syaghoubi00" title="Documentation">📖</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/johncming"><img src="https://avatars.githubusercontent.com/u/11719334?v=4?s=100" width="100px;" alt="johncming"/><br /><sub><b>johncming</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=johncming" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/dzonatan"><img src="https://avatars.githubusercontent.com/u/5166666?v=4?s=100" width="100px;" alt="Rokas Brazdžionis"/><br /><sub><b>Rokas Brazdžionis</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=dzonatan" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/abdennourzahaf"><img src="https://avatars.githubusercontent.com/u/62243290?v=4?s=100" width="100px;" alt="abdennourzahaf"/><br /><sub><b>abdennourzahaf</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=abdennourzahaf" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/josiahdenton"><img src="https://avatars.githubusercontent.com/u/44758384?v=4?s=100" width="100px;" alt="Josiah"/><br /><sub><b>Josiah</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=josiahdenton" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/tku137"><img src="https://avatars.githubusercontent.com/u/3052212?v=4?s=100" width="100px;" alt="Tony Fischer"/><br /><sub><b>Tony Fischer</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=tku137" title="Code">💻</a> <a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=tku137" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://qiita.com/program3152019"><img src="https://avatars.githubusercontent.com/u/64008205?v=4?s=100" width="100px;" alt="Kohei Wada"/><br /><sub><b>Kohei Wada</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=Kohei-Wada" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://zags.dev"><img src="https://avatars.githubusercontent.com/u/79172513?v=4?s=100" width="100px;" alt="Sebastian Yaghoubi"/><br /><sub><b>Sebastian Yaghoubi</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=syaghoubi00" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/johncming"><img src="https://avatars.githubusercontent.com/u/11719334?v=4?s=100" width="100px;" alt="johncming"/><br /><sub><b>johncming</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=johncming" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/dzonatan"><img src="https://avatars.githubusercontent.com/u/5166666?v=4?s=100" width="100px;" alt="Rokas Brazdžionis"/><br /><sub><b>Rokas Brazdžionis</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=dzonatan" title="Code">💻</a></td>
     </tr>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/unlimitedsola"><img src="https://avatars.githubusercontent.com/u/3632663?v=4?s=100" width="100px;" alt="Sola"/><br /><sub><b>Sola</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=unlimitedsola" title="Documentation">📖</a> <a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=unlimitedsola" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ThisIsMani"><img src="https://avatars.githubusercontent.com/u/84711804?v=4?s=100" width="100px;" alt="Mani Chandra"/><br /><sub><b>Mani Chandra</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=ThisIsMani" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://nischalbasuti.github.io/"><img src="https://avatars.githubusercontent.com/u/14853910?v=4?s=100" width="100px;" alt="Nischal Basuti"/><br /><sub><b>Nischal Basuti</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=nischalbasuti" title="Documentation">📖</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://teoljungberg.com"><img src="https://avatars.githubusercontent.com/u/810650?v=4?s=100" width="100px;" alt="Teo Ljungberg"/><br /><sub><b>Teo Ljungberg</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=teoljungberg" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/JPricey"><img src="https://avatars.githubusercontent.com/u/4826348?v=4?s=100" width="100px;" alt="Joe Price"/><br /><sub><b>Joe Price</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=JPricey" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://ouuan.moe/about"><img src="https://avatars.githubusercontent.com/u/30581822?v=4?s=100" width="100px;" alt="Yufan You"/><br /><sub><b>Yufan You</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=ouuan" title="Documentation">📖</a> <a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=ouuan" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://m4dd0c.netlify.app"><img src="https://avatars.githubusercontent.com/u/77256586?v=4?s=100" width="100px;" alt="Manish Kumar"/><br /><sub><b>Manish Kumar</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=m4dd0c" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/unlimitedsola"><img src="https://avatars.githubusercontent.com/u/3632663?v=4?s=100" width="100px;" alt="Sola"/><br /><sub><b>Sola</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=unlimitedsola" title="Documentation">📖</a> <a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=unlimitedsola" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ThisIsMani"><img src="https://avatars.githubusercontent.com/u/84711804?v=4?s=100" width="100px;" alt="Mani Chandra"/><br /><sub><b>Mani Chandra</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=ThisIsMani" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://nischalbasuti.github.io/"><img src="https://avatars.githubusercontent.com/u/14853910?v=4?s=100" width="100px;" alt="Nischal Basuti"/><br /><sub><b>Nischal Basuti</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=nischalbasuti" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://teoljungberg.com"><img src="https://avatars.githubusercontent.com/u/810650?v=4?s=100" width="100px;" alt="Teo Ljungberg"/><br /><sub><b>Teo Ljungberg</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=teoljungberg" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/JPricey"><img src="https://avatars.githubusercontent.com/u/4826348?v=4?s=100" width="100px;" alt="Joe Price"/><br /><sub><b>Joe Price</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=JPricey" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://ouuan.moe/about"><img src="https://avatars.githubusercontent.com/u/30581822?v=4?s=100" width="100px;" alt="Yufan You"/><br /><sub><b>Yufan You</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=ouuan" title="Documentation">📖</a> <a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=ouuan" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://m4dd0c.netlify.app"><img src="https://avatars.githubusercontent.com/u/77256586?v=4?s=100" width="100px;" alt="Manish Kumar"/><br /><sub><b>Manish Kumar</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=m4dd0c" title="Code">💻</a></td>
     </tr>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://www.azdanov.dev"><img src="https://avatars.githubusercontent.com/u/6123841?v=4?s=100" width="100px;" alt="Anton Ždanov"/><br /><sub><b>Anton Ždanov</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=azdanov" title="Documentation">📖</a> <a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=azdanov" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="http://fredrikaverpil.github.io"><img src="https://avatars.githubusercontent.com/u/994357?v=4?s=100" width="100px;" alt="Fredrik Averpil"/><br /><sub><b>Fredrik Averpil</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=fredrikaverpil" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://a14n.net"><img src="https://avatars.githubusercontent.com/u/509703?v=4?s=100" width="100px;" alt="Aaron D Borden"/><br /><sub><b>Aaron D Borden</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=adborden" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/AtifChy"><img src="https://avatars.githubusercontent.com/u/42291930?v=4?s=100" width="100px;" alt="Md. Iftakhar Awal Chowdhury"/><br /><sub><b>Md. Iftakhar Awal Chowdhury</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=AtifChy" title="Code">💻</a> <a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=AtifChy" title="Documentation">📖</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/danilohorta"><img src="https://avatars.githubusercontent.com/u/214497460?v=4?s=100" width="100px;" alt="Danilo Horta"/><br /><sub><b>Danilo Horta</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=danilohorta" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://mihamina.rktmb.org"><img src="https://avatars.githubusercontent.com/u/488088?v=4?s=100" width="100px;" alt="Mihamina Rakotomandimby"/><br /><sub><b>Mihamina Rakotomandimby</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=rakotomandimby" title="Documentation">📖</a> <a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=rakotomandimby" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="http://ajmalshajahan.me"><img src="https://avatars.githubusercontent.com/u/23806715?v=4?s=100" width="100px;" alt="Ajmal S"/><br /><sub><b>Ajmal S</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=AjmalShajahan" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://www.azdanov.dev"><img src="https://avatars.githubusercontent.com/u/6123841?v=4?s=100" width="100px;" alt="Anton Ždanov"/><br /><sub><b>Anton Ždanov</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=azdanov" title="Documentation">📖</a> <a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=azdanov" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://fredrikaverpil.github.io"><img src="https://avatars.githubusercontent.com/u/994357?v=4?s=100" width="100px;" alt="Fredrik Averpil"/><br /><sub><b>Fredrik Averpil</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=fredrikaverpil" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://a14n.net"><img src="https://avatars.githubusercontent.com/u/509703?v=4?s=100" width="100px;" alt="Aaron D Borden"/><br /><sub><b>Aaron D Borden</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=adborden" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/AtifChy"><img src="https://avatars.githubusercontent.com/u/42291930?v=4?s=100" width="100px;" alt="Md. Iftakhar Awal Chowdhury"/><br /><sub><b>Md. Iftakhar Awal Chowdhury</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=AtifChy" title="Code">💻</a> <a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=AtifChy" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/danilohorta"><img src="https://avatars.githubusercontent.com/u/214497460?v=4?s=100" width="100px;" alt="Danilo Horta"/><br /><sub><b>Danilo Horta</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=danilohorta" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://mihamina.rktmb.org"><img src="https://avatars.githubusercontent.com/u/488088?v=4?s=100" width="100px;" alt="Mihamina Rakotomandimby"/><br /><sub><b>Mihamina Rakotomandimby</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=rakotomandimby" title="Documentation">📖</a> <a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=rakotomandimby" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://ajmalshajahan.me"><img src="https://avatars.githubusercontent.com/u/23806715?v=4?s=100" width="100px;" alt="Ajmal S"/><br /><sub><b>Ajmal S</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=AjmalShajahan" title="Code">💻</a></td>
     </tr>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/samiulsami"><img src="https://avatars.githubusercontent.com/u/33352407?v=4?s=100" width="100px;" alt="Samiul Islam"/><br /><sub><b>Samiul Islam</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=samiulsami" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://ruicsh.github.io"><img src="https://avatars.githubusercontent.com/u/8294038?v=4?s=100" width="100px;" alt="Rui Costa"/><br /><sub><b>Rui Costa</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=ruicsh" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ctchen222"><img src="https://avatars.githubusercontent.com/u/49014608?v=4?s=100" width="100px;" alt="CTCHEN"/><br /><sub><b>CTCHEN</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=ctchen222" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/towoe"><img src="https://avatars.githubusercontent.com/u/8666134?v=4?s=100" width="100px;" alt="Tobias Wölfel"/><br /><sub><b>Tobias Wölfel</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=towoe" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/garcia5"><img src="https://avatars.githubusercontent.com/u/21695295?v=4?s=100" width="100px;" alt="Alexander Garcia"/><br /><sub><b>Alexander Garcia</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=garcia5" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/kharandziuk"><img src="https://avatars.githubusercontent.com/u/3404755?v=4?s=100" width="100px;" alt="Max Kharandziuk"/><br /><sub><b>Max Kharandziuk</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=kharandziuk" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/pxwg"><img src="https://avatars.githubusercontent.com/u/149765160?v=4?s=100" width="100px;" alt="Xinyu Xiang"/><br /><sub><b>Xinyu Xiang</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=pxwg" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/samiulsami"><img src="https://avatars.githubusercontent.com/u/33352407?v=4?s=100" width="100px;" alt="Samiul Islam"/><br /><sub><b>Samiul Islam</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=samiulsami" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://ruicsh.github.io"><img src="https://avatars.githubusercontent.com/u/8294038?v=4?s=100" width="100px;" alt="Rui Costa"/><br /><sub><b>Rui Costa</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=ruicsh" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ctchen222"><img src="https://avatars.githubusercontent.com/u/49014608?v=4?s=100" width="100px;" alt="CTCHEN"/><br /><sub><b>CTCHEN</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=ctchen222" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/towoe"><img src="https://avatars.githubusercontent.com/u/8666134?v=4?s=100" width="100px;" alt="Tobias Wölfel"/><br /><sub><b>Tobias Wölfel</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=towoe" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/garcia5"><img src="https://avatars.githubusercontent.com/u/21695295?v=4?s=100" width="100px;" alt="Alexander Garcia"/><br /><sub><b>Alexander Garcia</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=garcia5" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/kharandziuk"><img src="https://avatars.githubusercontent.com/u/3404755?v=4?s=100" width="100px;" alt="Max Kharandziuk"/><br /><sub><b>Max Kharandziuk</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=kharandziuk" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/pxwg"><img src="https://avatars.githubusercontent.com/u/149765160?v=4?s=100" width="100px;" alt="Xinyu Xiang"/><br /><sub><b>Xinyu Xiang</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=pxwg" title="Code">💻</a></td>
     </tr>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/junqizhang"><img src="https://avatars.githubusercontent.com/u/22600124?v=4?s=100" width="100px;" alt="junqizhang"/><br /><sub><b>junqizhang</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=junqizhang" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="http://card.calumhub.xyz"><img src="https://avatars.githubusercontent.com/u/89159592?v=4?s=100" width="100px;" alt="Calum Lynch"/><br /><sub><b>Calum Lynch</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=Tlunch" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/sirjls"><img src="https://avatars.githubusercontent.com/u/270346599?v=4?s=100" width="100px;" alt="sirjls"/><br /><sub><b>sirjls</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=sirjls" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/kolchurinvv"><img src="https://avatars.githubusercontent.com/u/18503099?v=4?s=100" width="100px;" alt="Vladimir Kolchurin"/><br /><sub><b>Vladimir Kolchurin</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=kolchurinvv" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://rosesecurity.dev"><img src="https://avatars.githubusercontent.com/u/72598486?v=4?s=100" width="100px;" alt="RoseSecurity"/><br /><sub><b>RoseSecurity</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=RoseSecurity" title="Documentation">📖</a> <a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=RoseSecurity" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/abhr-0"><img src="https://avatars.githubusercontent.com/u/121384410?v=4?s=100" width="100px;" alt="Abhraneel Mukherjee"/><br /><sub><b>Abhraneel Mukherjee</b></sub></a><br /><a href="https://github.com/CopilotC-Nvim/CopilotChat.nvim/commits?author=abhr-0" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/junqizhang"><img src="https://avatars.githubusercontent.com/u/22600124?v=4?s=100" width="100px;" alt="junqizhang"/><br /><sub><b>junqizhang</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=junqizhang" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://card.calumhub.xyz"><img src="https://avatars.githubusercontent.com/u/89159592?v=4?s=100" width="100px;" alt="Calum Lynch"/><br /><sub><b>Calum Lynch</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=Tlunch" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/sirjls"><img src="https://avatars.githubusercontent.com/u/270346599?v=4?s=100" width="100px;" alt="sirjls"/><br /><sub><b>sirjls</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=sirjls" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/kolchurinvv"><img src="https://avatars.githubusercontent.com/u/18503099?v=4?s=100" width="100px;" alt="Vladimir Kolchurin"/><br /><sub><b>Vladimir Kolchurin</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=kolchurinvv" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://rosesecurity.dev"><img src="https://avatars.githubusercontent.com/u/72598486?v=4?s=100" width="100px;" alt="RoseSecurity"/><br /><sub><b>RoseSecurity</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=RoseSecurity" title="Documentation">📖</a> <a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=RoseSecurity" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/abhr-0"><img src="https://avatars.githubusercontent.com/u/121384410?v=4?s=100" width="100px;" alt="Abhraneel Mukherjee"/><br /><sub><b>Abhraneel Mukherjee</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=abhr-0" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
@@ -731,4 +731,4 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 # Stargazers
 
-[![Stargazers over time](https://starchart.cc/CopilotC-Nvim/CopilotChat.nvim.svg?variant=adaptive)](https://starchart.cc/CopilotC-Nvim/CopilotChat.nvim)
+[![Stargazers over time](https://starchart.cc/code-ai-nvim/copilot-chat.nvim.svg?variant=adaptive)](https://starchart.cc/code-ai-nvim/copilot-chat.nvim)

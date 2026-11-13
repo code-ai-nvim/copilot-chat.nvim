@@ -1,13 +1,13 @@
 local async = require('plenary.async')
-local client = require('CopilotChat.client')
-local constants = require('CopilotChat.constants')
-local select = require('CopilotChat.select')
-local utils = require('CopilotChat.utils')
-local files = require('CopilotChat.utils.files')
+local client = require('copilot-chat.client')
+local constants = require('copilot-chat.constants')
+local select = require('copilot-chat.select')
+local utils = require('copilot-chat.utils')
+local files = require('copilot-chat.utils.files')
 
 --- Prepare a buffer for applying a diff
 ---@param filename string?
----@param source CopilotChat.ui.chat.Source
+---@param source copilot_chat.ui.chat.Source
 ---@return integer
 local function prepare_diff_buffer(filename, source)
   if not filename then
@@ -38,32 +38,32 @@ local function prepare_diff_buffer(filename, source)
   return diff_bufnr
 end
 
----@class CopilotChat.config.mapping
+---@class copilot_chat.config.mapping
 ---@field normal string?
 ---@field insert string?
----@field callback fun(source: CopilotChat.ui.chat.Source)
+---@field callback fun(source: copilot_chat.ui.chat.Source)
 
----@class CopilotChat.config.mapping.yank_diff : CopilotChat.config.mapping
+---@class copilot_chat.config.mapping.yank_diff : copilot_chat.config.mapping
 ---@field register string?
 
----@class CopilotChat.config.mappings
----@field complete CopilotChat.config.mapping|false|nil
----@field close CopilotChat.config.mapping|false|nil
----@field reset CopilotChat.config.mapping|false|nil
----@field submit_prompt CopilotChat.config.mapping|false|nil
----@field accept_diff CopilotChat.config.mapping|false|nil
----@field jump_to_diff CopilotChat.config.mapping|false|nil
----@field quickfix_diffs CopilotChat.config.mapping|false|nil
----@field quickfix_answers CopilotChat.config.mapping|false|nil
----@field yank_diff CopilotChat.config.mapping.yank_diff|false|nil
----@field show_diff CopilotChat.config.mapping|false|nil
----@field show_info CopilotChat.config.mapping|false|nil
----@field show_help CopilotChat.config.mapping|false|nil
+---@class copilot_chat.config.mappings
+---@field complete copilot_chat.config.mapping|false|nil
+---@field close copilot_chat.config.mapping|false|nil
+---@field reset copilot_chat.config.mapping|false|nil
+---@field submit_prompt copilot_chat.config.mapping|false|nil
+---@field accept_diff copilot_chat.config.mapping|false|nil
+---@field jump_to_diff copilot_chat.config.mapping|false|nil
+---@field quickfix_diffs copilot_chat.config.mapping|false|nil
+---@field quickfix_answers copilot_chat.config.mapping|false|nil
+---@field yank_diff copilot_chat.config.mapping.yank_diff|false|nil
+---@field show_diff copilot_chat.config.mapping|false|nil
+---@field show_info copilot_chat.config.mapping|false|nil
+---@field show_help copilot_chat.config.mapping|false|nil
 return {
   complete = {
     insert = '<Tab>',
     callback = function()
-      require('CopilotChat.completion').complete()
+      require('copilot-chat.completion').complete()
     end,
   },
 
@@ -71,7 +71,7 @@ return {
     normal = 'q',
     insert = '<C-c>',
     callback = function()
-      require('CopilotChat').close()
+      require('copilot-chat').close()
     end,
   },
 
@@ -79,7 +79,7 @@ return {
     normal = '<C-l>',
     insert = '<C-l>',
     callback = function()
-      require('CopilotChat').reset()
+      require('copilot-chat').reset()
     end,
   },
 
@@ -87,7 +87,7 @@ return {
     normal = '<CR>',
     insert = '<C-s>',
     callback = function()
-      local copilot = require('CopilotChat')
+      local copilot = require('copilot-chat')
       local message = copilot.chat:get_message(constants.ROLE.USER, true)
       if not message then
         return
@@ -101,8 +101,8 @@ return {
     normal = '<C-y>',
     insert = '<C-y>',
     callback = function(source)
-      local chat = require('CopilotChat').chat
-      local diff = require('CopilotChat.utils.diff')
+      local chat = require('copilot-chat').chat
+      local diff = require('copilot-chat.utils.diff')
 
       local block = chat:get_block(constants.ROLE.ASSISTANT, true)
       if not block then
@@ -125,8 +125,8 @@ return {
   jump_to_diff = {
     normal = 'gj',
     callback = function(source)
-      local chat = require('CopilotChat').chat
-      local diff = require('CopilotChat.utils.diff')
+      local chat = require('copilot-chat').chat
+      local diff = require('copilot-chat.utils.diff')
 
       local block = chat:get_block(constants.ROLE.ASSISTANT, true)
       if not block then
@@ -148,8 +148,8 @@ return {
     normal = 'gy',
     register = '"', -- Default register to use for yanking
     callback = function()
-      local config = require('CopilotChat.config')
-      local chat = require('CopilotChat').chat
+      local config = require('copilot-chat.config')
+      local chat = require('copilot-chat').chat
       local block = chat:get_block(constants.ROLE.ASSISTANT, true)
       if not block then
         return
@@ -162,8 +162,8 @@ return {
   show_diff = {
     normal = 'gd',
     callback = function(source)
-      local chat = require('CopilotChat').chat
-      local diff = require('CopilotChat.utils.diff')
+      local chat = require('copilot-chat').chat
+      local diff = require('copilot-chat.utils.diff')
 
       local block = chat:get_block(constants.ROLE.ASSISTANT, true)
       if not block then
@@ -220,7 +220,7 @@ return {
   quickfix_diffs = {
     normal = 'gqd',
     callback = function()
-      local chat = require('CopilotChat').chat
+      local chat = require('copilot-chat').chat
       local items = {}
       local messages = chat:get_messages()
       for _, message in ipairs(messages) do
@@ -249,7 +249,7 @@ return {
   quickfix_answers = {
     normal = 'gqa',
     callback = function()
-      local chat = require('CopilotChat').chat
+      local chat = require('copilot-chat').chat
       local items = {}
       local messages = chat:get_messages()
       for i, message in ipairs(messages) do
@@ -277,8 +277,8 @@ return {
   show_info = {
     normal = 'gc',
     callback = function(source)
-      local chat = require('CopilotChat').chat
-      local prompts = require('CopilotChat.prompts')
+      local chat = require('copilot-chat').chat
+      local prompts = require('copilot-chat.prompts')
 
       local message = chat:get_message(constants.ROLE.USER, true)
       if not message then
@@ -366,8 +366,8 @@ return {
   show_help = {
     normal = 'gh',
     callback = function()
-      local config = require('CopilotChat.config')
-      local chat = require('CopilotChat').chat
+      local config = require('copilot-chat.config')
+      local chat = require('copilot-chat').chat
 
       local chat_help = '**`Special tokens`**\n'
       chat_help = chat_help .. '`@<function>` to share function\n'

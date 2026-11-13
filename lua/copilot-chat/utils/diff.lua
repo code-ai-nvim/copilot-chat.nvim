@@ -184,7 +184,7 @@ function M.apply_unified_diff(diff_text, original_content)
 end
 
 --- Get diff from block content and buffer lines
----@param block CopilotChat.ui.chat.Block Block containing diff info
+---@param block copilot_chat.ui.chat.Block Block containing diff info
 ---@param lines table table of lines
 ---@return string diff, string content
 function M.get_diff(block, lines)
@@ -215,7 +215,7 @@ function M.get_diff(block, lines)
 end
 
 --- Apply a diff (unified or indices) to buffer lines
----@param block CopilotChat.ui.chat.Block Block containing diff info
+---@param block copilot_chat.ui.chat.Block Block containing diff info
 ---@param lines table table of lines
 ---@return table new_lines
 function M.apply_diff(block, lines)
@@ -229,7 +229,7 @@ function M.apply_diff(block, lines)
 end
 
 --- Get changed region for diff (unified or indices)
----@param block CopilotChat.ui.chat.Block Block containing diff info
+---@param block copilot_chat.ui.chat.Block Block containing diff info
 ---@param lines table table of lines
 ---@return number? first, number? last
 function M.get_diff_region(block, lines)

@@ -1,6 +1,6 @@
-local resources = require('CopilotChat.resources')
-local utils = require('CopilotChat.utils')
-local files = require('CopilotChat.utils.files')
+local resources = require('copilot-chat.resources')
+local utils = require('copilot-chat.utils')
+local files = require('copilot-chat.utils.files')
 
 --- Get diagnostics for a buffer and format them as text
 ---@param bufnr number
@@ -40,15 +40,15 @@ local function get_diagnostics_text(bufnr, start_line, end_line)
   return #diag_lines > 1 and table.concat(diag_lines, '\n') or ''
 end
 
----@class CopilotChat.config.functions.Function
+---@class copilot_chat.config.functions.Function
 ---@field description string?
 ---@field schema table?
 ---@field group string?
 ---@field trusted boolean?
 ---@field uri string?
----@field resolve fun(input: table, source: CopilotChat.ui.chat.Source):CopilotChat.client.Resource[]
+---@field resolve fun(input: table, source: copilot_chat.ui.chat.Source):copilot_chat.client.Resource[]
 
----@type table<string, CopilotChat.config.functions.Function>
+---@type table<string, copilot_chat.config.functions.Function>
 return {
   file = {
     group = 'copilot',
@@ -233,7 +233,7 @@ return {
     resolve = function(_, source)
       utils.schedule_main()
 
-      local select = require('CopilotChat.select')
+      local select = require('copilot-chat.select')
       local selection = select.get(source.bufnr)
       if not selection then
         return {}
@@ -442,8 +442,8 @@ return {
     resolve = function(input, source)
       utils.schedule_main()
 
-      local select = require('CopilotChat.select')
-      local diff = require('CopilotChat.utils.diff')
+      local select = require('copilot-chat.select')
+      local diff = require('copilot-chat.utils.diff')
 
       -- Find or create the buffer for the file
       local filename = input.filename
