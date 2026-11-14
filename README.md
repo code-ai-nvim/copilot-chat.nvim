@@ -6,655 +6,281 @@ Thomas, your work is the foundation that makes this fork possible. The time, car
 
 Thank you for creating CopilotChat.nvim and sharing it with the Neovim community. As this fork takes its own direction, I remain deeply grateful for your contributions and proud to acknowledge the work it builds on.
 
-<div align="center">
+# Overview
 
-# Copilot Chat for Neovim
+`copilot-chat.nvim` is a pure-Lua Neovim plugin that integrates **GitHub Copilot Chat** (along with extensible AI providers such as GitHub Models) directly into Neovim. Built around an interactive Markdown chat buffer powered by Tree-sitter, it emphasizes explicit context control, transparent tool execution, and deep editor integration.
 
-[![Release](https://img.shields.io/github/v/release/code-ai-nvim/copilot-chat.nvim?logo=github&style=for-the-badge)](https://github.com/code-ai-nvim/copilot-chat.nvim/releases/latest)
-[![Build](https://img.shields.io/github/actions/workflow/status/code-ai-nvim/copilot-chat.nvim/ci.yml?logo=github&style=for-the-badge)](https://github.com/code-ai-nvim/copilot-chat.nvim/actions/workflows/ci.yml)
-[![Documentation](https://img.shields.io/badge/documentation-up-green.svg?logo=vim&style=for-the-badge)](https://code-ai-nvim.github.io/copilot-chat.nvim/)
+## Key Features
 
-[![Contributors](https://img.shields.io/github/all-contributors/code-ai-nvim/copilot-chat.nvim?color=ee8449&logo=github&label=contributors&style=for-the-badge)](#contributors)
-[![Discord](https://img.shields.io/discord/1200633211236122665?logo=discord&label=discord&style=for-the-badge)](https://discord.gg/vy6hJsTWaZ)
-[![Dotfyle](https://dotfyle.com/plugins/code-ai-nvim/copilot-chat.nvim/shield?style=for-the-badge)](https://dotfyle.com/plugins/code-ai-nvim/copilot-chat.nvim)
-
-![image](https://github.com/user-attachments/assets/9ee30811-0fb8-4500-91f6-34ea6b26adea)
-
-https://github.com/user-attachments/assets/8cad5643-63b2-4641-a5c4-68bc313f20e6
-
-</div>
-
-copilot-chat.nvim brings GitHub Copilot Chat capabilities directly into Neovim with a focus on transparency and user control.
-
-- 🤖 **Multiple AI Models** - GitHub Copilot (including GPT-4o, Gemini 2.5 Pro, Claude 4 Sonnet, Claude 3.7 Sonnet, Claude 3.5 Sonnet, o3-mini, o4-mini) + custom providers (Ollama, Mistral.ai). The exact list of available models depends on your [GitHub Copilot settings](https://github.com/settings/copilot/features) and the models provided by GitHub's API.
-- 🔧 **Tool Calling** - LLM can call workspace functions (file reading, git operations, search) with manual approval or automatic execution for trusted tools
-- 🔒 **Privacy First** - Only shares what you explicitly request - no background data collection
-- 📝 **Interactive Chat** - Interactive UI with completion, diffs, and quickfix integration
-- 🎯 **Smart Prompts** - Composable templates and sticky prompts for consistent context
-- ⚡ **Token Efficient** - Resource replacement prevents duplicate context, history management via tiktoken counting
-- 🔗 **Scriptable** - Comprehensive Lua API for automation and headless mode operation
-- 🔌 **Extensible** - [Custom functions](https://github.com/code-ai-nvim/copilot-chat.nvim/discussions/categories/functions) and [providers](https://github.com/code-ai-nvim/copilot-chat.nvim/discussions/categories/providers), plus integrations like [mcphub.nvim](https://github.com/ravitemer/mcphub.nvim)
+- **Multi-Model & Multi-Endpoint Support** — Connects to GitHub Copilot's `/chat/completions` and `/responses` APIs (including automatic endpoint routing for Copilot Business and Enterprise accounts), supports `auto` session model resolution, and exposes configurable reasoning-effort variants (`<model>:<effort>`, such as `gpt-5.4:high`).
+- **AI Credit Rate Visibility & Quota Tracking** — Displays default-tier `input/output` AI Credit rates per million tokens directly in the `:CopilotChatModels` picker, and reports AI Credit and completion quota snapshots in the chat info overlay (`gc`).
+- **Explicit Context Resources (`#`)** — Attach visual selections, active/visible/listed/quickfix buffers (with inline LSP diagnostics), files, workspace globs, ripgrep searches, git diffs, clipboard contents, or web URLs. Resources are deduplicated and refreshed in place across turns.
+- **Agentic Tool Calling (`@`)** — Expose workspace functions (`@file`, `@buffer`, `@glob`, `@grep`, `@gitdiff`, `@url`, `@clipboard`, `@bash`, `@edit`, or `@copilot` for the full built-in group) to the model. Untrusted tool calls require explicit user approval in the chat buffer, while tools listed in `trusted_tools` execute automatically.
+- **Composable Prompts (`/`) & Sticky Context (`>`)** — Combine reusable prompt templates and system instructions with sticky lines (`> ...`) that persist across turns in a conversation. Automatically injects project-level instructions from `.github/copilot-instructions.md` and `AGENTS.md` when present in the working directory.
+- **Interactive Diffs & Diagnostics** — Preview proposed changes in a native Neovim diff split (`gd`), apply block or unified diffs directly to buffers (`<C-y>`), send code blocks or answers to the quickfix list (`gqd` / `gqa`), and surface `:CopilotChatReview` findings as inline `vim.diagnostic` warnings.
+- **Token Management** — Counts prompt, history, and resource tokens via `tiktoken_core` (falling back to character-based estimation when unavailable) and trims older conversation history automatically to stay within each model's input token budget.
+- **Flexible UI & Scriptable Lua API** — Supports `vertical`, `horizontal`, `float`, and `replace` window layouts, foldable message sections, `:CopilotChat` completion, JSON chat history persistence, and a headless-capable Lua API (`require('copilot-chat')`).
 
 # Installation
 
 ## Requirements
 
-- [Neovim 0.10.0+](https://neovim.io/)
-- [curl 8.0.0+](https://curl.se/)
-- [Copilot chat in the IDE](https://github.com/settings/copilot) enabled in GitHub settings
+- [Neovim](https://neovim.io/) `>= 0.10.0`
+- [curl](https://curl.se/) `>= 8.0.0`
 - [plenary.nvim](https://github.com/nvim-lua/plenary.nvim)
+- Tree-sitter `markdown` parser (for example via [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) and `:TSInstall markdown`)
+- Active GitHub Copilot subscription (authenticates via existing `copilot.vim` / `copilot.lua` OAuth tokens, `$GITHUB_TOKEN` in GitHub Codespaces, or interactive GitHub OAuth device flow)
 
-> [!WARNING]
-> For Neovim < 0.11.0, add `noinsert` or `noselect` to your `completeopt` otherwise chat autocompletion will not work.
-> For best autocompletion experience, also add `popup` to your `completeopt` (even on Neovim 0.11.0+).
+> [!NOTE]
+> On Neovim `< 0.11.0`, include `noinsert` or `noselect` in `completeopt` so automatic in-chat completion (`chat_autocomplete = true`) can trigger as you type.
 
 ## Optional Dependencies
 
-- [tiktoken_core](https://github.com/gptlang/lua-tiktoken) - For accurate token counting
-  - Arch Linux: Install [`luajit-tiktoken-bin`](https://aur.archlinux.org/packages/luajit-tiktoken-bin) or [`lua51-tiktoken-bin`](https://aur.archlinux.org/packages/lua51-tiktoken-bin) from AUR
-  - Via luarocks: `sudo luarocks install --lua-version 5.1 tiktoken_core`
-  - Manual: Download from [lua-tiktoken releases](https://github.com/gptlang/lua-tiktoken/releases) and save as `tiktoken_core.so` in your Lua path
-- [git](https://git-scm.com/) - For git diff context features
-- [ripgrep](https://github.com/BurntSushi/ripgrep) - For improved search performance
-- [lynx](https://lynx.invisible-island.net/) - For improved URL context features
+- [`tiktoken_core`](https://github.com/gptlang/lua-tiktoken) — Native Lua module for exact token counting (searches `package.cpath` and the plugin's `build/` directory)
+- [`git`](https://git-scm.com/) — Required for `#gitdiff` resources and `:CopilotChatCommit`
+- [`ripgrep` (`rg`)](https://github.com/BurntSushi/ripgrep) — Accelerates `#glob` and `#grep` workspace queries
+- [`lynx`](https://lynx.invisible-island.net/) — Improves HTML-to-text extraction for `#url` (falls back to `curl` with HTML stripping)
+- [`gh` CLI](https://cli.github.com/) — Used for token lookup when enabling the optional `github_models` provider
+- Tree-sitter `diff` parser (`:TSInstall diff`) — Enhances syntax highlighting in diff blocks
 
-## Integration with pickers
+## Integration with Pickers
 
-For various plugin pickers to work correctly, you need to replace `vim.ui.select` with your desired picker (as the default `vim.ui.select` is very basic). Here are some examples:
+Several commands and resource prompts use `vim.ui.select`. While `copilot-chat.nvim` includes a dedicated code-based fallback for Neovim's built-in `inputlist()` selector, registering a rich `vim.ui.select` backend provides fuzzy filtering and single-step selection:
 
-- [fzf-lua](https://github.com/ibhagwan/fzf-lua?tab=readme-ov-file#neovim-api) - call `require('fzf-lua').register_ui_select()`
-- [telescope](https://github.com/nvim-telescope/telescope-ui-select.nvim?tab=readme-ov-file#telescope-setup-and-configuration) - setup `telescope-ui-select.nvim` plugin
-- [snacks.picker](https://github.com/folke/snacks.nvim/blob/main/docs/picker.md#%EF%B8%8F-config) - enable `ui_select` config
-- [mini.pick](https://github.com/echasnovski/mini.pick/blob/main/lua/mini/pick.lua#L1229) - set `vim.ui.select = require('mini.pick').ui_select`
+- **snacks.nvim** — Enable `picker = { ui_select = true }`
+- **fzf-lua** — Call `require('fzf-lua').register_ui_select()`
+- **telescope.nvim** — Load [`telescope-ui-select.nvim`](https://github.com/nvim-telescope/telescope-ui-select.nvim)
+- **mini.pick** — Set `vim.ui.select = require('mini.pick').ui_select`
 
-## [lazy.nvim](https://github.com/folke/lazy.nvim)
+## Setup with `lazy.nvim`
 
 ```lua
-return {
-  {
-    "code-ai-nvim/copilot-chat.nvim",
-    dependencies = {
-      { "nvim-lua/plenary.nvim", branch = "master" },
-    },
-    build = "make tiktoken",
-    opts = {
-      -- See Configuration section for options
-    },
+{
+  'code-ai-nvim/copilot-chat.nvim',
+  dependencies = {
+    { 'nvim-lua/plenary.nvim', branch = 'master' },
+  },
+  opts = {
+    -- Optional configuration overrides (see Configuration below)
   },
 }
 ```
 
-## [vim-plug](https://github.com/junegunn/vim-plug)
-
-```vim
-call plug#begin()
-Plug 'nvim-lua/plenary.nvim'
-Plug 'code-ai-nvim/copilot-chat.nvim'
-call plug#end()
-
-lua << EOF
-require("copilot-chat").setup()
-EOF
-```
-
-# Core Concepts
-
-- **Resources** (`#<name>`) - Add specific content (files, git diffs, URLs) to your prompt
-- **Tools** (`@<name>`) - Give LLM access to functions it can call during the chat, with manual approval by default
-- **Sticky Prompts** (`> <text>`) - Persist context across single chat session
-- **Models** (`$<model>`) - Specify which AI model to use for the chat
-- **Prompts** (`/PromptName`) - Use predefined prompt templates for common tasks
-
 > [!TIP]
-> Press `<Tab>` after typing `#` or `@` to see available options and auto-complete. This is the easiest way to discover what's available!
+> Calling `require('copilot-chat').setup()` is optional if you use default settings: accessing any module method or running a `:CopilotChat*` command lazily initializes the plugin automatically. Run `:checkhealth copilot-chat` at any time to verify your setup and dependencies.
 
-# Usage
+# Commands
 
-## Commands
+| Command | Description |
+| --- | --- |
+| `:CopilotChat <input>?` | Open chat with optional input |
+| `:CopilotChatOpen` | Open chat window |
+| `:CopilotChatClose` | Close chat window |
+| `:CopilotChatToggle` | Toggle chat window |
+| `:CopilotChatStop` | Stop current output |
+| `:CopilotChatReset` | Reset chat window |
+| `:CopilotChatSave <name>?` | Save chat history |
+| `:CopilotChatLoad <name>?` | Load chat history |
+| `:CopilotChatPrompts` | View/select prompt templates |
+| `:CopilotChatModels` | View/select available models |
+| `:CopilotChat<PromptName>` | Use specific prompt template |
 
-| Command                    | Description                   |
-| -------------------------- | ----------------------------- |
-| `:CopilotChat <input>?`    | Open chat with optional input |
-| `:CopilotChatOpen`         | Open chat window              |
-| `:CopilotChatClose`        | Close chat window             |
-| `:CopilotChatToggle`       | Toggle chat window            |
-| `:CopilotChatStop`         | Stop current output           |
-| `:CopilotChatReset`        | Reset chat window             |
-| `:CopilotChatSave <name>?` | Save chat history             |
-| `:CopilotChatLoad <name>?` | Load chat history             |
-| `:CopilotChatPrompts`      | View/select prompt templates  |
-| `:CopilotChatModels`       | View/select available models  |
-| `:CopilotChat<PromptName>` | Use specific prompt template  |
+## Detailed Command Reference
 
-The model picker shows AI Credit rates as `input/output` per million tokens. A `?` means the rate is unavailable.
-These are default-tier rates; cached-token and long-context pricing may differ. Auto has no fixed model rate.
-Auto is listed first. Other models are ordered by output rate, lowest first, with unavailable rates last.
+### `:CopilotChat <input>?`
 
-## Chat Key Mappings
+Opens the chat window or immediately submits a prompt to the active model.
 
-| Insert  | Normal  | Action                                               |
-| ------- | ------- | ---------------------------------------------------- |
-| `<Tab>` | -       | **Autocomplete resources/files/options** (use this!) |
-| `<C-c>` | `q`     | Close the chat window                                |
-| `<C-l>` | `<C-l>` | Reset and clear the chat window                      |
-| `<C-s>` | `<CR>`  | Submit the current prompt                            |
-| `<C-y>` | `<C-y>` | Accept nearest diff                                  |
-| -       | `gj`    | Jump to section of nearest diff                      |
-| -       | `gqa`   | Add all answers from chat to quickfix                |
-| -       | `gqd`   | Add all diffs from chat to quickfix                  |
-| -       | `gy`    | Yank nearest diff to register                        |
-| -       | `gd`    | Show diff between source and nearest diff            |
-| -       | `gc`    | Show info about current chat                         |
-| -       | `gh`    | Show help message                                    |
+- **Without `<input>`** (e.g., `:CopilotChat`): Equivalent to `:CopilotChatOpen` — opens and focuses the chat window ready for input.
+- **With `<input>`** (e.g., `:CopilotChat How does client:ask stream responses?`): Opens the chat window if it is not already focused, processes sticky prompts (`> ...`), resolves inline tokens (`/prompt`, `@tool`, `#resource`, `$model`), attaches configured default resources (`#selection` by default), and streams the assistant's response.
+- **Visual range support**: Accepts a line range (`:'<,'>CopilotChat Refactor this function`). Leaving visual mode updates the `<` and `>` marks in the source buffer so `#selection` automatically captures the highlighted code and any diagnostics within those lines.
 
-**💡 Pro tip:** After typing `#`, `@`, `#buffer:`, or `#file:`, press `<Tab>` to see available options. This is the fastest way to work!
+### `:CopilotChatOpen`
 
-> [!NOTE]
-> **Tab key not working?** Some plugins (e.g. `copilot.vim`) also map `<Tab>` in insert mode.  
-> To fix conflicts, disable the other plugin's `<Tab>` mapping:
->
-> ```lua
-> -- For copilot.vim
-> vim.g.copilot_no_tab_map = true
-> vim.keymap.set('i', '<S-Tab>', 'copilot#Accept("\\<S-Tab>")', { expr = true, replace_keycodes = false })
-> ```
->
-> Or customize copilot-chat keymaps in your config.
+Opens and focuses the Copilot Chat window using your configured `window.layout` (`vertical`, `horizontal`, `float`, or `replace`).
 
-## Predefined Functions
+- Records the originating window and buffer as the active **source** context for `#selection`, `#buffer:active`, and diff application.
+- Populates any active sticky lines (`> ...`) into the pending user message, moves the cursor to the end of the chat buffer, and enters Insert mode automatically when `auto_insert_mode = true`.
 
-All predefined functions belong to the `copilot` group.
+### `:CopilotChatClose`
 
-| Function    | Manual `#...` | Description                                            | Available Options                                                     |
-| ----------- | ------------- | ------------------------------------------------------ | --------------------------------------------------------------------- |
-| `bash`      | No            | Executes a bash command and returns output             | Tool-only (use `@copilot`)                                            |
-| `buffer`    | Yes           | Retrieves content from buffer(s) with diagnostics      | `active`, `visible`, `listed`, `quickfix`, buffer number, or filename |
-| `clipboard` | Yes           | Provides access to system clipboard content            | No options                                                            |
-| `edit`      | No            | Applies a unified diff to a file                       | Tool-only (use `@copilot`)                                            |
-| `file`      | Yes           | Reads content from a specified file path               | Any file path (use `<Tab>` for completion)                            |
-| `gitdiff`   | Yes           | Retrieves git diff information                         | `unstaged` (default), `staged`, or commit SHA                         |
-| `glob`      | Yes           | Lists filenames matching a pattern in workspace        | Any glob pattern (default: `**/*`)                                    |
-| `grep`      | Yes           | Searches for a pattern across files in workspace       | Any search pattern                                                    |
-| `selection` | Yes           | Includes the current visual selection with diagnostics | No options                                                            |
-| `url`       | Yes           | Fetches content from a specified URL                   | Any HTTPS URL                                                         |
+Closes the chat window without discarding the current conversation.
 
-- **`#<function>`** - Embeds output directly in your message (e.g., `#buffer:listed`, `#file:src/main.lua`)
-- **`@<function/group>`** - Makes function(s) available for LLM to call when needed (e.g., `@copilot`, `@file`)
+- For `vertical`, `horizontal`, and `float` layouts, closes the chat window split or floating window.
+- For the `replace` layout, restores the original source buffer in the window.
+- Conversation messages, sticky settings, and token counts remain in memory and reappear on the next `:CopilotChatOpen` or `:CopilotChatToggle`.
 
-## Predefined Prompts
+### `:CopilotChatToggle`
 
-| Prompt     | Description                                                            |
-| ---------- | ---------------------------------------------------------------------- |
-| `Explain`  | Write detailed explanation of selected code as paragraphs              |
-| `Review`   | Comprehensive code review with line-specific issue reporting           |
-| `Fix`      | Identify problems and rewrite code with fixes and explanation          |
-| `Optimize` | Improve performance and readability with optimization strategy         |
-| `Docs`     | Add documentation comments to selected code                            |
-| `Tests`    | Generate tests for selected code                                       |
-| `Commit`   | Generate commit message with commitizen convention from staged changes |
+Toggles the visibility of the chat window: closes the window if it is currently visible, or opens and focuses it if it is hidden. Ideal for binding to a global toggle keymap.
 
-## Resource Usage
+### `:CopilotChatStop`
 
-```markdown
-# Current buffer
+Cancels any in-flight model generation or streaming response (`client:stop()`).
 
-#buffer:active
+- Stops the progress spinner, unlocks the chat buffer (`modifiable = true`), preserves any partial output already written to the conversation, and appends a fresh `User` prompt section so you can continue or refine your question immediately.
 
-# All open buffers (replaces old #buffers)
+### `:CopilotChatReset`
 
-#buffer:listed
+Stops any active generation and resets the chat session to a clean state.
 
-# All visible buffers
+- Clears all messages and token counters from the chat buffer.
+- Clears inline review diagnostics (`copilot-chat-diagnostics` namespace) and resets active selection marks in the source buffer.
+- Re-initializes default sticky lines from `config.sticky` (if configured) and prepares a new `User` prompt section.
 
-#buffer:visible
+### `:CopilotChatSave <name>?`
 
-# Specific file
+Serializes and saves the current chat conversation history to disk as JSON.
 
-#file:src/main.lua
+- **Optional `<name>`**: Saved to `<history_path>/<name>.json` (where `history_path` defaults to `vim.fn.stdpath('data') .. '/copilotchat_history'`). If `<name>` is omitted, saves to `default.json`.
+- **Tab completion**: Completes existing saved history file names in `history_path` (plus `default`).
 
-# Git changes
+### `:CopilotChatLoad <name>?`
 
-#gitdiff:staged
+Loads a previously saved chat conversation from disk into the chat buffer.
 
-# URL content
+- **Optional `<name>`**: Reads `<history_path>/<name>.json`, defaulting to `default.json` when `<name>` is omitted.
+- **Behavior**: Stops any active request, resets the current chat window, reconstructs all saved `User`, `Copilot`, and `Tool` message sections, and appends a ready-to-edit `User` prompt section if the loaded history was empty.
+- **Tab completion**: Completes saved session names found in `history_path` (plus `default`).
 
-#url:https://example.com/docs
-```
+### `:CopilotChatPrompts`
 
-## Tool Usage
+Opens an interactive picker (`vim.ui.select`) listing all available prompt templates defined in `config.prompts` (sorted alphabetically with their descriptions or prompt text).
 
-When you use `@copilot`, the LLM can call functions from the `copilot` group such as `bash`, `edit`, `file`, `glob`, `grep`, and `gitdiff`.
+- Selecting an entry immediately executes `ask()` with that template's prompt text and per-prompt configuration overrides (`system_prompt`, `resources`, `tools`, `callback`, etc.).
+- Supports visual ranges (`:'<,'>CopilotChatPrompts`) so you can select code first and then pick an action from the menu.
 
-```markdown
-# Give LLM access to workspace tools
+### `:CopilotChatModels`
 
-@copilot What files are in this project?
+Fetches available chat models from enabled providers and opens an interactive model and reasoning-effort selector to update the active `config.model`.
 
-# Sticky context with tools
+- **AI Credit rates & ordering**: The model picker shows AI Credit rates as `input/output` per million tokens. A `?` means the rate is unavailable. These are default-tier rates; cached-token and long-context pricing may differ. Auto has no fixed model rate. Auto is listed first. Other models are ordered by output rate, lowest first, with unavailable rates last.
+- **Capability indicators & active marker**: Each model entry displays metadata in brackets — `[<input>/<output>, <provider>, streaming, tools, reasoning]` — and prefixes the currently active model or effort variant with `*`.
+- **Reasoning effort variants**: Models that advertise reasoning effort levels (`none`, `minimal`, `low`, `medium`, `high`, `xhigh`, `max`) list their variants directly underneath the base model. Selecting a variant stores its composite identifier `<model>:<effort>` (for example `gpt-5.4:high`).
+- **Adaptive picker UI**: When a custom `vim.ui.select` picker (such as Telescope, fzf-lua, or Snacks) is active, models and indented effort variants are presented as a selectable list. When Neovim's default `vim.ui.select` is active, the command echoes a grouped list with short codes (e.g., `3` for a base model or `10c` for a specific reasoning effort) and prompts for the code via `vim.ui.input`.
 
-> #buffer:listed
-> @copilot
-> Refactor the authentication code
-```
+### `:CopilotChat<PromptName>`
 
-By default, tool calls require manual approval. Configure `trusted_tools` to automatically run specific tools (see [Functions](#functions)).
+During `setup()`, `copilot-chat.nvim` dynamically registers a dedicated `:CopilotChat<PromptName>` command for every entry in `config.prompts` that defines a `prompt` string (note: system-only entries such as `COPILOT_BASE` or `COPILOT_INSTRUCTIONS` do not create user commands).
 
-> [!WARNING]
-> `trusted_tools = true` allows the model to run every enabled tool without asking. Only use it if you fully trust the tool set and workspace.
+- **Extra arguments & ranges**: Every generated command accepts optional trailing text (`:CopilotChat<PromptName> <extra instructions>`), which is appended to the template's prompt, and supports visual range selection (`:'<,'>CopilotChat<PromptName>`).
+- **Built-in prompt commands**:
+  - `:CopilotChatExplain` — Explains the selected code as structured paragraphs using the `COPILOT_EXPLAIN` system prompt.
+  - `:CopilotChatReview` — Reviews the selected code for quality, style, performance, security, and SOLID issues using `COPILOT_REVIEW`, and publishes line-specific warnings to Neovim's diagnostic framework (`vim.diagnostic`, source `Copilot Review`).
+  - `:CopilotChatFix` — Identifies bugs or issues in the selected code, rewrites it with fixes, and explains how the changes resolve the problems.
+  - `:CopilotChatOptimize` — Refactors the selected code to improve performance and readability and explains the optimization strategy.
+  - `:CopilotChatDocs` — Generates documentation comments for the selected code.
+  - `:CopilotChatTests` — Generates unit tests for the selected code.
+  - `:CopilotChatCommit` — Generates a Commitizen-formatted commit message (title under 50 characters, body wrapped at 72 characters, inside a `gitcommit` code block) using `#gitdiff:staged` as its resource automatically.
+- **Custom prompt commands**: Adding a new entry (for example `Refactor = { prompt = '...', description = '...', mapping = '<leader>cr' }`) to `opts.prompts` automatically creates `:CopilotChatRefactor` (and optionally binds `<leader>cr` in Normal and Visual modes).
+
+# Chat Syntax, Resources, Tools & Mappings
+
+## Special Tokens in Prompts
+
+Inside the chat buffer (or in `:CopilotChat <input>`), you can use special prefix tokens with `<Tab>` completion:
+
+| Token | Purpose | Examples |
+| --- | --- | --- |
+| `#<resource>` / `#<resource>:<input>` | Embed context data into the prompt (quote multi-word inputs with backticks) | `#selection`, `#buffer:visible`, `#file:init.lua`, `` #grep:`function setup` `` |
+| `@<tool>` / `@<group>` | Grant the model access to callable tools or a tool group | `@copilot`, `@file`, `@grep`, `@edit`, `@bash` |
+| `/<prompt>` | Expand a prompt template or switch the system prompt | `/Explain`, `/Commit`, `/COPILOT_REVIEW` |
+| `$<model>` | Override the model (and optional `:effort`) for the request | `$auto`, `$gpt-5-mini`, `$gpt-5.4:high` |
+| `> <text>` | Sticky line — automatically copied into subsequent user prompts in the chat | `> @copilot`, `> #buffer:active`, `> Answer concisely` |
+
+## Built-in Functions (Resources & Tools)
+
+All built-in functions belong to the `copilot` group (`@copilot`). Functions that define a `uri` can be used both as `#` resources and as `@` model-callable tools; action-only functions (`bash`, `edit`) are used as `@` tools:
+
+| Name | `#` Resource | `@` Tool | Description |
+| --- | --- | --- | --- |
+| `selection` | Yes | Yes | Visual selection in the source buffer, annotated with line numbers and LSP diagnostics (enabled as default resource) |
+| `buffer` | Yes | Yes | Buffer content + LSP diagnostics; accepts `active` (default), `visible`, `listed`, `quickfix`, or a buffer number |
+| `file` | Yes | Yes | File contents read from disk (`#file:<path>`) |
+| `glob` | Yes | Yes | Workspace filenames matching a glob pattern (`#glob:**/*.lua`) |
+| `grep` | Yes | Yes | Workspace text search powered by `rg` or fallback search (`#grep:<pattern>`) |
+| `gitdiff` | Yes | Yes | Git diff output for `unstaged` (default), `staged`, or a `<sha>` |
+| `url` | Yes | Yes | Remote web page or raw file content fetched via `lynx` or `curl` (`#url:<https://...>`) |
+| `clipboard` | Yes | Yes | Contents of the system clipboard (`+` register) |
+| `bash` | No | Yes | Executes a `bash -c` command in the source working directory and returns `stdout` |
+| `edit` | No | Yes | Applies a unified diff directly to a target file buffer and highlights the modified region |
+
+> [!IMPORTANT]
+> By default, tool calls requested by the model are **not** executed automatically. Instead, `#<tool>:<call_id>` lines are inserted into the next user prompt so you can inspect, edit, or delete them before pressing `<CR>` to run them. Set `trusted_tools` (for example `trusted_tools = { 'file', 'glob', 'grep' }` or `trusted_tools = 'copilot'`) to auto-execute specific tools or groups.
+
+## Default Chat Window Key Mappings
+
+These buffer-local mappings are active inside the `copilot-chat` window (press `gh` at any time to view active bindings):
+
+| Action | Normal | Insert | Description |
+| --- | --- | --- | --- |
+| `submit_prompt` | `<CR>` | `<C-s>` | Submit the current user prompt (or approve pending `#tool:id` calls) |
+| `complete` | — | `<Tab>` | Trigger `@`/`/`/`#`/`$` completion, or prompt for input after `#<resource>:` |
+| `close` | `q` | `<C-c>` | Close the chat window or active overlay |
+| `reset` | `<C-l>` | `<C-l>` | Reset the chat buffer (`:CopilotChatReset`) |
+| `accept_diff` | `<C-y>` | `<C-y>` | Apply the closest assistant code/diff block to the target buffer |
+| `show_diff` | `gd` | — | Open an overlay previewing applied changes with Neovim `diffthis` |
+| `jump_to_diff` | `gj` | — | Jump to and highlight the corresponding region in the source buffer |
+| `yank_diff` | `gy` | — | Yank the closest assistant code block into `mappings.yank_diff.register` (`"`) |
+| `quickfix_diffs` | `gqd` | — | Populate the quickfix list with all code/diff blocks in the chat |
+| `quickfix_answers` | `gqa` | — | Populate the quickfix list with all assistant responses in the chat |
+| `show_info` | `gc` | — | Show overlay with log/history paths, provider AI Credit quotas, active model, tools, system prompt, and selection |
+| `show_help` | `gh` | — | Show overlay listing special tokens and configured key mappings |
 
 # Configuration
 
-For all available configuration options, see [`lua/copilot-chat/config.lua`](lua/copilot-chat/config.lua).
-
-## Quick Setup
-
-Most users only need to configure a few options:
+Pass any subset of options to `require('copilot-chat').setup(opts)` (or `opts` in `lazy.nvim`). All defaults live in `lua/copilot-chat/config.lua`:
 
 ```lua
-{
-  model = 'gpt-5-mini',        -- AI model to use
-  temperature = 0.1,           -- Lower = focused, higher = creative
-  trusted_tools = nil,         -- Require approval for all tool calls
-  window = {
-    layout = 'vertical',       -- 'vertical', 'horizontal', 'float'
-    width = 0.5,              -- 50% of screen width
-  },
-  auto_insert_mode = true,     -- Enter insert mode when opening
-}
-```
-
-## Window & Appearance
-
-```lua
-{
-  window = {
-    layout = 'float',
-    width = 80, -- Fixed width in columns
-    height = 20, -- Fixed height in rows
-    border = 'rounded', -- 'single', 'double', 'rounded', 'solid'
-    title = '🤖 AI Assistant',
-    zindex = 100, -- Ensure window stays on top
-  },
-
-  headers = {
-    user = '👤 You',
-    assistant = '🤖 Copilot',
-    tool = '🔧 Tool',
-  },
-
-  separator = '━━',
-  auto_fold = true, -- Automatically folds non-assistant messages
-}
-```
-
-`window.layout` also supports `'replace'` to reuse the current window.
-
-## Buffer Behavior
-
-```lua
--- Auto-command to customize chat buffer behavior
-vim.api.nvim_create_autocmd('BufEnter', {
-  pattern = 'copilot-chat',
-  callback = function()
-    vim.opt_local.relativenumber = false
-    vim.opt_local.number = false
-    vim.opt_local.conceallevel = 0
-  end,
-})
-```
-
-## Highlights
-
-You can customize colors by setting highlight groups in your config:
-
-```lua
--- In your colorscheme or init.lua
-vim.api.nvim_set_hl(0, 'CopilotChatHeader', { fg = '#7C3AED', bold = true })
-vim.api.nvim_set_hl(0, 'CopilotChatSeparator', { fg = '#374151' })
-```
-
-Types of copilot highlights:
-
-- `CopilotChatHeader` - Header highlight in chat buffer
-- `CopilotChatSeparator` - Separator highlight in chat buffer
-- `CopilotChatSelection` - Selection highlight in source buffer
-- `CopilotChatStatus` - Status and spinner in chat buffer
-- `CopilotChatHelp` - Help text in chat buffer
-- `CopilotChatResource` - Resource highlight in chat buffer (e.g. `#file`, `#gitdiff`)
-- `CopilotChatTool` - Tool call highlight in chat buffer (e.g. `@copilot`)
-- `CopilotChatPrompt` - Prompt highlight in chat buffer (e.g. `/Explain`, `/Review`)
-- `CopilotChatModel` - Model highlight in chat buffer (e.g. `$gpt-5-mini`)
-- `CopilotChatUri` - URI highlight in chat buffer (e.g. `##https://...`)
-- `CopilotChatAnnotation` - Annotation highlight in chat buffer (file headers, tool call headers, tool call body)
-- `CopilotChatAnnotationHeader` - Annotation header highlight in chat buffer
-
-## Prompts
-
-Define your own prompts in the configuration:
-
-```lua
-{
-  prompts = {
-    MyCustomPrompt = {
-      prompt = 'Explain how it works.',
-      system_prompt = 'You are very good at explaining stuff',
-      mapping = '<leader>ccmc',
-      description = 'My custom prompt description',
-    },
-    Yarrr = {
-      system_prompt = 'You are fascinated by pirates, so please respond in pirate speak.',
-    },
-    NiceInstructions = {
-      system_prompt = 'You are a nice coding tutor, so please respond in a friendly and helpful manner.',
-    }
-  }
-}
-```
-
-## Functions
-
-Use `trusted_tools` to control which tool calls are executed automatically:
-
-```lua
-{
-  trusted_tools = nil, -- default: require approval for all tool calls
-
-  -- trust all functions in a group
-  -- trusted_tools = 'copilot',
-
-  -- trust specific functions by name or groups by name
-  -- trusted_tools = { 'file', 'glob', 'grep' },
-
-  -- trust every enabled tool call
-  -- trusted_tools = true,
-}
-```
-
-**How tool trust works:**
-
-A tool is trusted when any of these match:
-
-- Its function definition sets `trusted = true`
-- Its function name appears in `trusted_tools`
-- Its function group appears in `trusted_tools`
-- `trusted_tools = true`
-
-**Recommended setup:** Trust read-only functions like `file`, `glob`, or `grep` for a smoother workflow without compromising safety.
-
-> [!WARNING]
-> Trusted tools run without asking for confirmation. Be especially careful with tools like `bash` and `edit`, which can change your workspace.
-
-Define your own functions in the configuration with input handling and schema:
-
-```lua
-{
-  functions = {
-    birthday = {
-      description = 'Retrieves birthday information for a person',
-      uri = 'birthday://{name}',
-      trusted = false,
-      schema = {
-        type = 'object',
-        required = { 'name' },
-        properties = {
-          name = {
-            type = 'string',
-            enum = { 'Alice', 'Bob', 'Charlie' },
-            description = "Person's name",
-          },
-        },
-      },
-      resolve = function(input)
-        return {
-          {
-            uri = 'birthday://' .. input.name,
-            mimetype = 'text/plain',
-            data = input.name .. ' birthday info',
-          },
-        }
-      end,
-    },
-  }
-}
-```
-
-If a function has a `uri`, it can be used manually with `#birthday:Alice`. Functions without a `uri` are tool-only and can only be called by the model.
-
-## Providers
-
-Add custom AI providers:
-
-```lua
-{
-  providers = {
-    my_provider = {
-      get_url = function(opts) return 'https://api.example.com/chat' end,
-      get_headers = function() return { ['Authorization'] = 'Bearer ' .. api_key } end,
-      get_models = function() return { { id = 'gpt-5-mini', name = 'GPT-5 mini model' } } end,
-      prepare_input = require('copilot-chat.config.providers').copilot.prepare_input,
-      prepare_output = require('copilot-chat.config.providers').copilot.prepare_output,
-    }
-  }
-}
-```
-
-**Provider Interface:**
-
-```lua
-{
-  -- Optional: Disable provider
-  disabled?: boolean,
-
-  -- Optional: Extra info about the provider displayed in info panel
-  get_info?(headers: table): string[]
-
-  -- Optional: Get extra request headers with optional expiration time
-  get_headers?(): table<string,string>, number?,
-
-  -- Optional: Get API endpoint URL
-  get_url?(opts: copilot_chat.Provider.options): string,
-
-  -- Optional: Prepare request input
-  prepare_input?(inputs: table<copilot_chat.Provider.input>, opts: copilot_chat.Provider.options): table,
-
-  -- Optional: Prepare response output
-  prepare_output?(output: table, opts: copilot_chat.Provider.options): copilot_chat.Provider.output,
-
-  -- Optional: Get available models
-  get_models?(headers: table): table<copilot_chat.Provider.model>,
-
-  -- Optional: Resolve a user-facing model id to a provider model id.
-  -- Second return value is optional extra request headers (e.g. Copilot-Session-Token).
-  resolve_model?(headers: table, model: string): string, table?,
-}
-```
-
-**Built-in providers:**
-
-- `copilot` - GitHub Copilot (default)
-- `github_models` - GitHub Models (disabled by default)
-
-# API Reference
-
-## Core
-
-```lua
-local chat = require('copilot-chat')
-
--- Basic Chat Functions
-chat.ask(prompt, config)      -- Ask a question with optional config
-
--- Window Management
-chat.open(config)             -- Open chat window with optional config
-chat.close()                  -- Close chat window
-chat.toggle(config)           -- Toggle chat window visibility with optional config
-chat.reset()                  -- Reset the chat
-chat.stop()                   -- Stop current output
-
--- Prompt & Model Management
-chat.select_prompt(config)    -- Open prompt selector with optional config
-chat.select_model()           -- Open model selector
-
--- History Management
-chat.load(name, history_path) -- Load chat history
-chat.save(name, history_path) -- Save chat history
-
--- Configuration
-chat.setup(config)            -- Update configuration
-chat.log_level(level)         -- Set log level (debug, info, etc.)
-```
-
-## Chat Window
-
-You can also access the chat window UI methods through the `chat.chat` object:
-
-```lua
-local window = require('copilot-chat').chat
-
--- Chat UI State
-window:visible()             -- Check if chat window is visible
-window:focused()             -- Check if chat window is focused
-
--- Message Management
-window:get_message(role, cursor)               -- Get chat message by role, either last or closest to cursor
-window:add_message({ role, content }, replace) -- Add or replace a message in chat
-window:remove_message(role, cursor)            -- Remove chat message by role, either last or closest to cursor
-window:get_block(role, cursor)                 -- Get code block by role, either last or closest to cursor
-
--- Content Management
-window:append(text)          -- Append text to chat window
-window:clear()               -- Clear chat window content
-window:start()               -- Start writing to chat window
-window:finish()              -- Finish writing to chat window
-
--- Source Management
-window:get_source()          -- Get the current source buffer and window
-window:set_source(winnr)     -- Set the source window
-
--- Navigation
-window:follow()              -- Move cursor to end of chat content
-window:focus()               -- Focus the chat window
-
--- Advanced Features
-window:overlay(opts)         -- Show overlay with specified options
-```
-
-## Prompt parser
-
-```lua
-local parser = require('copilot-chat.prompts')
-
-parser.resolve_prompt()         -- Resolve prompt references
-parser.resolve_tools()          -- Resolve tools shared with the model via @...
-parser.resolve_functions()      -- Resolve manual function/resource references via #...
-parser.resolve_model()          -- Resolve model from prompt (WARN: async, requires plenary.async.run)
-```
-
-## Example Usage
-
-```lua
--- Open chat, ask a question and handle response
-require('copilot-chat').open()
-require('copilot-chat').ask('#buffer Explain this code', {
-  callback = function(response)
-    vim.notify('Got response: ' .. vim.trim(response.content):sub(1, 50) .. '...')
-  end,
-})
-
--- Save and load chat history
-require('copilot-chat').save('my_debugging_session')
-require('copilot-chat').load('my_debugging_session')
-
--- Use custom sticky and model
-require('copilot-chat').ask('How can I optimize this?', {
-  model = 'gpt-5-mini',
-  sticky = { '#buffer', '#gitdiff:staged' },
-})
-
--- Automatically trust a small read-only tool set
 require('copilot-chat').setup({
-  trusted_tools = { 'file', 'glob', 'grep' },
+  model = 'gpt-5-mini', -- Default model (supports '<model>:<effort>', e.g. 'gpt-5.4:high', or 'auto')
+  tools = nil, -- Default tool or list of tools/groups shared with the LLM (e.g. 'copilot' or { 'file', 'grep' })
+  resources = 'selection', -- Default resource(s) attached to prompts
+  sticky = nil, -- Default sticky line(s) added at the start of every new chat
+  trusted_tools = nil, -- Auto-approve specific tool names/groups, or true for all tools
+  diff = 'block', -- Diff format instructed to the model: 'block' or 'unified'
+  language = 'English', -- Natural language for assistant responses
+  temperature = 0.1, -- Sampling temperature (omitted automatically for o1/codex models)
+  remember_as_sticky = true, -- Persist runtime model/tool/resource/system_prompt overrides as sticky lines
+
+  window = {
+    layout = 'vertical', -- 'vertical' | 'horizontal' | 'float' | 'replace' | fun(): layout
+    width = 0.5, -- Fraction of columns (<= 1) or absolute column count (> 1)
+    height = 0.5, -- Fraction of lines (<= 1) or absolute row count (> 1)
+    relative = 'editor', -- Floating window anchor: 'editor' | 'win' | 'cursor' | 'mouse'
+    border = 'single', -- Floating window border style
+    title = 'Copilot Chat',
+  },
+
+  show_help = true, -- Display virtual-text help hint when waiting for input
+  show_folds = true, -- Enable section folding in the chat window
+  auto_fold = false, -- Automatically fold non-assistant sections
+  highlight_selection = true, -- Highlight active selection in the source buffer while chat is focused
+  auto_follow_cursor = true, -- Keep cursor following streamed output
+  auto_insert_mode = false, -- Enter Insert mode automatically on open / response completion
+  clear_chat_on_new_prompt = false, -- Reset chat automatically before each new ask()
+  stop_on_function_failure = false, -- Abort prompt if a function call errors
+
+  instruction_files = { -- Workspace instruction files automatically appended to system_prompt
+    '.github/copilot-instructions.md',
+    'AGENTS.md',
+  },
+
+  selection = 'visual', -- Selection marks source: 'visual' ('<, '>) or 'unnamed' ('[, '])
+  chat_autocomplete = true, -- Trigger completion automatically as you type
+  log_level = 'info', -- 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal'
+  history_path = vim.fn.stdpath('data') .. '/copilotchat_history',
 })
 ```
 
-For more examples, see the [examples wiki page](https://github.com/code-ai-nvim/copilot-chat.nvim/wiki/Examples-and-Tips).
+# Lua API
 
-# Development
+You can drive `copilot-chat.nvim` programmatically in keymaps, autocmds, or custom workflows via `local chat = require('copilot-chat')`:
 
-## Setup
-
-To set up the environment:
-
-1. Clone the repository:
-
-```bash
-git clone https://github.com/code-ai-nvim/copilot-chat.nvim
-cd copilot-chat.nvim
-```
-
-2. Install development dependencies:
-
-```bash
-make install-pre-commit
-```
-
-To run tests:
-
-```bash
-make test
-```
-
-To run the same formatting check as CI:
-
-```bash
-stylua --check .
-```
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch
-3. Make your changes
-4. Run tests and lint checks
-5. Submit a pull request
-
-See [CONTRIBUTING.md](/CONTRIBUTING.md) for detailed guidelines.
-
-# Contributors
-
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tbody>
-    <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/gptlang"><img src="https://avatars.githubusercontent.com/u/121417512?v=4?s=100" width="100px;" alt="gptlang"/><br /><sub><b>gptlang</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=gptlang" title="Code">💻</a> <a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=gptlang" title="Documentation">📖</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://productsway.com/"><img src="https://avatars.githubusercontent.com/u/870029?v=4?s=100" width="100px;" alt="Dung Duc Huynh (Kaka)"/><br /><sub><b>Dung Duc Huynh (Kaka)</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=jellydn" title="Code">💻</a> <a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=jellydn" title="Documentation">📖</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://qoobes.dev"><img src="https://avatars.githubusercontent.com/u/58834655?v=4?s=100" width="100px;" alt="Ahmed Haracic"/><br /><sub><b>Ahmed Haracic</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=qoobes" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://youtube.com/@ziontee113"><img src="https://avatars.githubusercontent.com/u/102876811?v=4?s=100" width="100px;" alt="Trí Thiện Nguyễn"/><br /><sub><b>Trí Thiện Nguyễn</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=ziontee113" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Cassius0924"><img src="https://avatars.githubusercontent.com/u/62874592?v=4?s=100" width="100px;" alt="He Zhizhou"/><br /><sub><b>He Zhizhou</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=Cassius0924" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://www.linkedin.com/in/guruprakashrajakkannu/"><img src="https://avatars.githubusercontent.com/u/9963717?v=4?s=100" width="100px;" alt="Guruprakash Rajakkannu"/><br /><sub><b>Guruprakash Rajakkannu</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=rguruprakash" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/kristofka"><img src="https://avatars.githubusercontent.com/u/140354?v=4?s=100" width="100px;" alt="kristofka"/><br /><sub><b>kristofka</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=kristofka" title="Code">💻</a></td>
-    </tr>
-    <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/PostCyberPunk"><img src="https://avatars.githubusercontent.com/u/134976996?v=4?s=100" width="100px;" alt="PostCyberPunk"/><br /><sub><b>PostCyberPunk</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=PostCyberPunk" title="Documentation">📖</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ctns"><img src="https://avatars.githubusercontent.com/u/1302759?v=4?s=100" width="100px;" alt="Katsuhiko Nishimra"/><br /><sub><b>Katsuhiko Nishimra</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=ktns" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/qoobes"><img src="https://avatars.githubusercontent.com/u/4156525?v=4?s=100" width="100px;" alt="Sjon-Paul Brown"/><br /><sub><b>Sjon-Paul Brown</b></sub></a><br /><a href="https://github.com/code-ai-nvim/copilot-chat.nvim/commits?author=sjonpaulbrown-cc" title="Code">💻</a></td>
-    </tr>
-  </tbody>
-</table>
-
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind are welcome!
-
-# Stargazers
-
-[![Stargazers over time](https://starchart.cc/code-ai-nvim/copilot-chat.nvim.svg?variant=adaptive)](https://starchart.cc/code-ai-nvim/copilot-chat.nvim)
-
-
+- `chat.setup(config?)` — Initialize or reconfigure the plugin.
+- `chat.ask(prompt, config?)` — Send `prompt` with optional per-call `copilot_chat.config.Shared` overrides (supports `headless = true` and `callback = function(response, source) ... end` for background automation without touching the UI).
+- `chat.open(config?)` / `chat.close()` / `chat.toggle(config?)` — Control the chat window lifecycle.
+- `chat.stop(reset?)` / `chat.reset()` — Cancel active streaming output or clear the chat session.
+- `chat.save(name?, history_path?)` / `chat.load(name?, history_path?)` — Save or restore JSON chat history.
+- `chat.select_prompt(config?)` / `chat.select_model()` — Open the interactive prompt or model picker.
+- `chat.log_level(level)` — Dynamically update the runtime log verbosity.
